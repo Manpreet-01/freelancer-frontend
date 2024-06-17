@@ -1,10 +1,7 @@
-import { ThemeProvider } from "@/components/theme-provider";
-import { Menu } from "./components/Menu";
 
-export default function Home() {
+
+export default function App() {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <Menu />
-    </ThemeProvider>
+    <h1>this is app.tsx page</h1>
   );
 }
