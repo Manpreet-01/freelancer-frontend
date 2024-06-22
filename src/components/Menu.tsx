@@ -38,6 +38,13 @@ export function Menu() {
                         </Link>
                     </MenubarTrigger>
                 </MenubarMenu>
+                <MenubarMenu>
+                    <MenubarTrigger>
+                        <Link to="/register" className="[&.active]:font-bold">
+                            Register
+                        </Link>
+                    </MenubarTrigger>
+                </MenubarMenu>
             </Menubar>
 
             <div className="pr-4">

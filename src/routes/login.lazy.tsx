@@ -90,7 +90,7 @@ export function LoginPage() {
                                         <FormItem>
                                             <FormLabel>Username</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Username" {...field} />
+                                                <Input placeholder="Username" autoComplete='username' {...field} />
                                             </FormControl>
                                             {/* <FormDescription>
                                                 Enter your Username here.
@@ -108,7 +108,7 @@ export function LoginPage() {
                                         <FormItem>
                                             <FormLabel>Password</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Password" {...field} />
+                                                <Input placeholder="Password" type='password' autoComplete='current-password' {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -127,8 +127,8 @@ export function LoginPage() {
                         </div>
                         <div className="mt-4 text-center text-sm">
                             Don&apos;t have an account?{" "}
-                            <Link to="/" className="underline">
-                                Sign up
+                            <Link to="/register" className="underline">
+                                Register here
                             </Link>
                         </div>
                     </form>
