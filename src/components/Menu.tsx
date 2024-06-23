@@ -6,7 +6,7 @@ import {
 import { ModeToggle } from "./mode-toggle";
 import { Link } from '@tanstack/react-router';
 
-export function Menu() {
+export function Menu({ isLoggedIn }: { isLoggedIn: boolean; }) {
     return (
         <div className="flex justify-between">
             <Menubar className="gap-8">
@@ -24,27 +24,33 @@ export function Menu() {
                         </Link>
                     </MenubarTrigger>
                 </MenubarMenu>
-                <MenubarMenu>
-                    <MenubarTrigger>
-                    <Link to="/profile" className="[&.active]:font-bold">
-                            Profile
-                        </Link>
-                    </MenubarTrigger>
-                </MenubarMenu>
-                <MenubarMenu>
-                    <MenubarTrigger>
-                        <Link to="/login" className="[&.active]:font-bold">
-                            Login
-                        </Link>
-                    </MenubarTrigger>
-                </MenubarMenu>
-                <MenubarMenu>
-                    <MenubarTrigger>
-                        <Link to="/register" className="[&.active]:font-bold">
-                            Register
-                        </Link>
-                    </MenubarTrigger>
-                </MenubarMenu>
+
+                {isLoggedIn ? (
+                    <MenubarMenu>
+                        <MenubarTrigger>
+                            <Link to="/profile" className="[&.active]:font-bold">
+                                Profile
+                            </Link>
+                        </MenubarTrigger>
+                    </MenubarMenu>
+                ) : (
+                    <>
+                        <MenubarMenu>
+                            <MenubarTrigger>
+                                <Link to="/login" className="[&.active]:font-bold">
+                                    Login
+                                </Link>
+                            </MenubarTrigger>
+                        </MenubarMenu>
+                        <MenubarMenu>
+                            <MenubarTrigger>
+                                <Link to="/register" className="[&.active]:font-bold">
+                                    Register
+                                </Link>
+                            </MenubarTrigger>
+                        </MenubarMenu>
+                    </>
+                )}
             </Menubar>
 
             <div className="pr-4">

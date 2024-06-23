@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { toast } from "@/components/ui/use-toast";
-import axios from 'axios';
+import { loginUser } from '@/lib/apiClient';
 
 
 export const Route = createLazyFileRoute('/login')({
@@ -22,15 +22,15 @@ export const Route = createLazyFileRoute('/login')({
 });
 
 
-const FormSchema = z.object({
+export const LoginFormSchema = z.object({
     username: z.string().min(1, { message: "Username is required" }),
     password: z.string().min(1, { message: 'Password is required' }),
 });
 
 
 export function LoginPage() {
-    const form = useForm<z.infer<typeof FormSchema>>({
-        resolver: zodResolver(FormSchema),
+    const form = useForm<z.infer<typeof LoginFormSchema>>({
+        resolver: zodResolver(LoginFormSchema),
         defaultValues: {
             username: '',
             password: '',
@@ -39,16 +39,13 @@ export function LoginPage() {
 
     const navigate = useNavigate();
 
-    async function onSubmit(formData: z.infer<typeof FormSchema>) {
-        console.log("submiteed : ", formData);
-
-
+    async function onSubmit(formData: z.infer<typeof LoginFormSchema>) {
         // TODO: render error handling messages in ui for better ux
         // form.formState.errors.username
         // form.setError('username', { message: 'username is invalid' });
 
         try {
-            const res = await axios.post("http://localhost:8000/api/v1/user/login", formData);
+            const res = await loginUser(formData);
             const d = res.data;
             console.log("res :: ", d);
 
