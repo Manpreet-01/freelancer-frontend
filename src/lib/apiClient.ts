@@ -9,13 +9,11 @@ export const apiClient = axios.create({
 });
 
 
-// Add an interceptor to set authorization header with user token before requests
 apiClient.interceptors.request.use(
     function (config) {
-        // Retrieve user token from local storage
         const token = localStorage.getItem("token");
-        // Set authorization header with bearer token
-        config.headers.Authorization = `Bearer ${token}`;
+        if (token) config.headers.Authorization = `Bearer ${token}`;
+
         return config;
     },
     function (error) {
@@ -23,8 +21,36 @@ apiClient.interceptors.request.use(
     }
 );
 
+apiClient.interceptors.response.use(function (response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    return response;
+}, async function (error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+    const originalReq = error.config;
+
+    console.log('res err ;;;;;;;;;;;  ', error);
+
+    if (error.response.status === 401) {
+        try {
+            await refreshToken();
+            return apiClient(originalReq);
+        }
+        catch (error) {
+            return Promise.reject(error);
+        }
+    }
+    return Promise.reject(error);
+});
+
+
 
 // API functions for different actions
+export const refreshToken = () => {
+    return apiClient.post("/user/refresh-tokens");
+};
+
 export const loginUser = (data: z.infer<typeof LoginFormSchema>) => {
     return apiClient.post("/user/login", data);
 };

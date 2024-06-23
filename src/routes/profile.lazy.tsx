@@ -37,13 +37,13 @@ function ProfilePage() {
     async function handleGetProfile() {
       try {
         const res = await getProfile();
-        const userProfile = res.data.data.user;
+        const userProfile = res?.data?.data?.user;
 
         setProfile(userProfile);
       }
       catch (error: any) {
         console.error('err during getting profile :: ', error);
-        if (error.response.status == 401) {
+        if (error.response?.status == 401 || error.response?.status == 403) {
           dispatch(logOutUser());
           return;
         }
