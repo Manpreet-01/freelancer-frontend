@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { toast } from '@/components/ui/use-toast';
 import { logOutUser } from '@/features/user/userSlice';
 import { getProfile, logoutUser } from '@/lib/apiClient';
 import { RootState } from '@/store/store';
@@ -45,6 +46,16 @@ function ProfilePage() {
         console.error('err during getting profile :: ', error);
         if (error.response?.status == 401 || error.response?.status == 403) {
           dispatch(logOutUser());
+          return;
+        }
+
+        if (error.code == 'ERR_NETWORK') {
+          toast({
+            title: "Network error",
+            description: 'You are not connected to internet.',
+            variant: 'destructive'
+          });
+          navigate({ to: '/not-found' });
           return;
         }
       }

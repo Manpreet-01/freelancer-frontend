@@ -32,7 +32,7 @@ apiClient.interceptors.response.use(function (response) {
 
     console.log('res err ;;;;;;;;;;;  ', error);
 
-    if (error.response.status === 401) {
+    if (error.response?.status === 401) {
         try {
             await refreshToken();
             return apiClient(originalReq);
@@ -61,4 +61,8 @@ export const logoutUser = () => {
 
 export const getProfile = () => {
     return apiClient.post("/user/profile");
+};
+
+export const getJobs = () => {
+    return apiClient.get("/job/get-all");
 };
