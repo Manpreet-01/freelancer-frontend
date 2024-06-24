@@ -3,20 +3,11 @@ import { Badge } from "./ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { DollarSign } from "lucide-react";
 
-export type JobItem = {
-    _id: string;
-    title: string;
-    description: string;
-    categories: string[];
-    tags: string[];
-    createdBy: string;
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
-};
+import type { JobItem } from "@/types/job.types";
+
 
 export default function JobCard({ job }: { job: JobItem; }) {
-    function handleClick(){
+    function handleClick() {
         // TODO: redirect to a detailed job page and fetch details with job._id
         // console.log('job clicked ', job._id);
     }
@@ -25,7 +16,7 @@ export default function JobCard({ job }: { job: JobItem; }) {
         <Card className="hover:border-white cursor-pointer" onClick={handleClick}>
             <CardHeader>
                 <div className="flex justify-between">
-                    <div>
+                    <div className="space-y-2">
                         <CardTitle>{job.title}</CardTitle>
                         <CardDescription>{job.description}</CardDescription>
                         <CardDescription>{timeSince(job.createdAt)}</CardDescription>

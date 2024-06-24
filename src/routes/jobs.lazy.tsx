@@ -1,8 +1,10 @@
-import JobCard, { JobItem } from '@/components/JobCard';
+import JobCard from '@/components/JobCard';
 import { toast } from '@/components/ui/use-toast';
 import { getJobs } from '@/lib/apiClient';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
+
+import type { JobItem } from '@/types/job.types';
 
 export const Route = createLazyFileRoute('/jobs')({
   component: JobsPage,

@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
+const SearchJobsLazyImport = createFileRoute('/search-jobs')()
 const RegisterLazyImport = createFileRoute('/register')()
 const ProfileLazyImport = createFileRoute('/profile')()
 const NotFoundLazyImport = createFileRoute('/not-found')()
@@ -25,6 +26,11 @@ const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const SearchJobsLazyRoute = SearchJobsLazyImport.update({
+  path: '/search-jobs',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/search-jobs.lazy').then((d) => d.Route))
 
 const RegisterLazyRoute = RegisterLazyImport.update({
   path: '/register',
@@ -114,6 +120,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterLazyImport
       parentRoute: typeof rootRoute
     }
+    '/search-jobs': {
+      id: '/search-jobs'
+      path: '/search-jobs'
+      fullPath: '/search-jobs'
+      preLoaderRoute: typeof SearchJobsLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -127,6 +140,7 @@ export const routeTree = rootRoute.addChildren({
   NotFoundLazyRoute,
   ProfileLazyRoute,
   RegisterLazyRoute,
+  SearchJobsLazyRoute,
 })
 
 /* prettier-ignore-end */
@@ -143,7 +157,8 @@ export const routeTree = rootRoute.addChildren({
         "/login",
         "/not-found",
         "/profile",
-        "/register"
+        "/register",
+        "/search-jobs"
       ]
     },
     "/": {
@@ -166,6 +181,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/register": {
       "filePath": "register.lazy.tsx"
+    },
+    "/search-jobs": {
+      "filePath": "search-jobs.lazy.tsx"
     }
   }
 }

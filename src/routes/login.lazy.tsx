@@ -15,6 +15,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { toast } from "@/components/ui/use-toast";
 import { loginUser } from '@/lib/apiClient';
+import { useDispatch, useSelector } from 'react-redux';
+import { logOutUser, setLoggedInUser } from '@/features/user/userSlice';
+import { useLayoutEffect } from 'react';
+import { RootState } from '@/store/store';
 
 
 export const Route = createLazyFileRoute('/login')({
@@ -38,6 +42,10 @@ export function LoginPage() {
     });
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+    const user = useSelector((state: RootState) => state.user.userData);
 
     async function onSubmit(formData: z.infer<typeof LoginFormSchema>) {
         // TODO: render error handling messages in ui for better ux
@@ -46,8 +54,9 @@ export function LoginPage() {
 
         try {
             const res = await loginUser(formData);
-            const d = res.data;
-            console.log("res :: ", d);
+            const userData = res.data.data.user;
+
+            dispatch(setLoggedInUser(userData));
 
             toast({
                 title: "Success!",
@@ -64,8 +73,17 @@ export function LoginPage() {
                 description: err.response?.data?.message || err.response?.message || err.message || "Form data submition Failed.",
                 variant: 'destructive'
             });
+
+            dispatch(logOutUser());
         }
     }
+
+    useLayoutEffect(() => {
+        if (isLoggedIn) {
+            navigate({ to: '/profile' });
+            return;
+        }
+    }, [isLoggedIn]);
 
     return (
         <Card className="mx-auto max-w-sm mt-8">

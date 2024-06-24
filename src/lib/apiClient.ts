@@ -34,7 +34,7 @@ apiClient.interceptors.response.use(function (response) {
 
     if (error.response?.status === 401) {
         try {
-            await refreshToken();
+            await refreshTokens();
             return apiClient(originalReq);
         }
         catch (error) {
@@ -47,7 +47,7 @@ apiClient.interceptors.response.use(function (response) {
 
 
 // API functions for different actions
-export const refreshToken = () => {
+export const refreshTokens = () => {
     return apiClient.post("/user/refresh-tokens");
 };
 
@@ -55,7 +55,7 @@ export const loginUser = (data: z.infer<typeof LoginFormSchema>) => {
     return apiClient.post("/user/login", data);
 };
 
-export const logoutUser = () => {
+export const logOutUser = () => {
     return apiClient.get("/user/logout");
 };
 
