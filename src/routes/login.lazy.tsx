@@ -45,7 +45,6 @@ export function LoginPage() {
     const dispatch = useDispatch();
 
     const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
-    const user = useSelector((state: RootState) => state.user.userData);
 
     async function onSubmit(formData: z.infer<typeof LoginFormSchema>) {
         // TODO: render error handling messages in ui for better ux
@@ -84,6 +83,8 @@ export function LoginPage() {
             return;
         }
     }, [isLoggedIn]);
+
+    if (isLoggedIn) return null;
 
     return (
         <Card className="mx-auto max-w-sm mt-8">

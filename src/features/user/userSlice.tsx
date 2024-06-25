@@ -1,6 +1,6 @@
 import { userData } from '@/types/user.types';
 import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, Reducer } from '@reduxjs/toolkit';
 
 export type UserState = {
     userData: userData | null,
@@ -29,4 +29,4 @@ export const userSlice = createSlice({
 
 
 export const { setLoggedInUser, logOutUser } = userSlice.actions;
-export default userSlice.reducer;
+export default userSlice.reducer as Reducer<UserState>;

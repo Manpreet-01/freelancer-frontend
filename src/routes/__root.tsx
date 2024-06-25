@@ -2,38 +2,33 @@ import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { ThemeProvider } from "@/components/theme-provider";
 import { Menu } from '@/components/Menu';
 import { Toaster } from "@/components/ui/toaster";
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
-import { useLayoutEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState, store } from '@/store/store';
 import { getProfile } from '@/lib/apiClient';
 import { logOutUser, setLoggedInUser } from '@/features/user/userSlice';
 
-
 // import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+
+
+async function handleVerifyLogin() {
+    try {
+        const res = await getProfile();
+        const user = res.data.data.user;
+        store.dispatch(setLoggedInUser(user));
+    } catch (err) {
+        console.log("err in verify user :: ", err);
+        store.dispatch(logOutUser());
+    }
+}
 
 export const Route = createRootRoute({
     component: RootLayout,
+    beforeLoad: handleVerifyLogin,
 });
 
 
 function RootLayout() {
     const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
-    const dispatch = useDispatch();
-
-    useLayoutEffect(() => {
-        async function handleVerifyUser() {
-            try {
-                const res = await getProfile();
-                const user = res.data.data.user;
-                dispatch(setLoggedInUser(user));
-            } catch (err) {
-                console.log("err in verify user :: ", err);
-                dispatch(logOutUser());
-            }
-        }
-
-        handleVerifyUser();
-    }, []);
 
     return (
         <>

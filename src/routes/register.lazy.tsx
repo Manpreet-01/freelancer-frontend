@@ -14,7 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { toast } from "@/components/ui/use-toast";
 import axios from 'axios';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import {
     Select,
@@ -23,6 +23,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 
 
 export const Route = createLazyFileRoute('/register')({
@@ -30,7 +32,7 @@ export const Route = createLazyFileRoute('/register')({
 });
 
 
-const FormSchema = z.object({
+const RegisterFormSchema = z.object({
     name: z.string().min(1, { message: "Name is required" }),
     email: z.string().min(1, { message: "Email is required" }).email({ message: 'Invalid email address' }),
     username: z.string().min(1, { message: "Username is required" }),
@@ -48,8 +50,8 @@ export function RegisterPage() {
 
     const usernameTimer: { current: any; } = useRef();
 
-    const form = useForm<z.infer<typeof FormSchema>>({
-        resolver: zodResolver(FormSchema),
+    const form = useForm<z.infer<typeof RegisterFormSchema>>({
+        resolver: zodResolver(RegisterFormSchema),
         defaultValues: {
             name: '',
             email: '',
@@ -60,6 +62,15 @@ export function RegisterPage() {
     });
 
     const navigate = useNavigate();
+    
+    const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+
+    useLayoutEffect(() => {
+        if (isLoggedIn) {
+            navigate({ to: '/profile' });
+            return;
+        }
+    }, [isLoggedIn]);
 
     useEffect(() => {
         if (usernameTimer.current) clearTimeout(usernameTimer.current);
@@ -107,7 +118,7 @@ export function RegisterPage() {
         }, 1000);
     }, [username]);
 
-    async function onSubmit(formData: z.infer<typeof FormSchema>) {
+    async function onSubmit(formData: z.infer<typeof RegisterFormSchema>) {
         console.log("submiteed : ", formData);
 
 
@@ -137,6 +148,8 @@ export function RegisterPage() {
             });
         }
     }
+    
+    if(isLoggedIn) return null;
 
     return (
         <Card className="mx-auto max-w-sm mt-8">

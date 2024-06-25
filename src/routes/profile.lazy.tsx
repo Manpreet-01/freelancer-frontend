@@ -46,31 +46,28 @@ function ProfilePage() {
     }
   }
 
+  if (!user) return null;
+
   return (
     <div className='mt-16'>
-
-      {isLoggedIn && user && (
-        <>
-          <div className='flex justify-between mx-8'>
-            <div className='flex flex-col gap-4 mt-4'>
-              <h1 className='text-2xl'>Hello {user.name}</h1>
-              <p>username: @{user.username}</p>
-              <p>email: {user.email}</p>
-              <p>role: {user.role}</p>
-              <p>joined on: {new Date(user.createdAt).toLocaleDateString()}</p>
-              <p>last Updated: {new Date(user.updatedAt).toLocaleDateString()}</p>
-            </div>
-            <div>
-              <img width={400} height={400} src='vite.svg' className='rounded-2xl p-6 border' />
-            </div>
-          </div>
-          <div className='text-center'>
-            <Button
-              onClick={handleLogout}
-            >Logout</Button>
-          </div>
-        </>
-      )}
+      <div className='flex justify-between mx-8'>
+        <div className='flex flex-col gap-4 mt-4'>
+          <h1>Name: {user.name}</h1>
+          <p>Username: @{user.username}</p>
+          <p>Email: {user.email}</p>
+          <p>Role: {user.role}</p>
+          <p>Joined on: {new Date(user.createdAt).toLocaleDateString()}</p>
+          <p>Last Updated: {new Date(user.updatedAt).toLocaleDateString()}</p>
+        </div>
+        <div>
+          <img width={300} height={300} src='vite.svg' className='rounded-full border' />
+        </div>
+      </div>
+      <div className='text-center'>
+        <Button
+          onClick={handleLogout}
+        >Logout</Button>
+      </div>
     </div>
   );
 }

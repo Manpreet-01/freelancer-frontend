@@ -30,7 +30,7 @@ apiClient.interceptors.response.use(function (response) {
     // Do something with response error
     const originalReq = error.config;
 
-    console.log('res err ;;;;;;;;;;;  ', error);
+    // console.log('res err ;;;;;;;;;;;  ', error);
 
     if (error.response?.status === 401) {
         try {
