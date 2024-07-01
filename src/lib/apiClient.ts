@@ -1,3 +1,4 @@
+import { createJobSchema } from "@/routes/(jobs)/job/post/index.lazy";
 import { LoginFormSchema } from "@/routes/login.lazy";
 import axios from "axios";
 import { z } from "zod";
@@ -32,15 +33,16 @@ apiClient.interceptors.response.use(function (response) {
 
     // console.log('res err ;;;;;;;;;;;  ', error);
 
-    if (error.response?.status === 401) {
-        try {
-            await refreshTokens();
-            return apiClient(originalReq);
-        }
-        catch (error) {
-            return Promise.reject(error);
-        }
-    }
+    // create a unique status code for message for retry logic so it dont interfare with other responses and errors
+    // if (error.response?.status === 401) {
+    //     try {
+    //         await refreshTokens();
+    //         return apiClient(originalReq);
+    //     }
+    //     catch (error) {
+    //         return Promise.reject(error);
+    //     }
+    // }
     return Promise.reject(error);
 });
 
@@ -69,4 +71,12 @@ export const getJobs = () => {
 
 export const getJobsById = (id: string) => {
     return apiClient.get(`/job/get?id=${id}`);
+};
+
+export const getClientJobs = (id: string) => {
+    return apiClient.get(`/job/client/get-all?id=${id}`);
+};
+
+export const createJob = (jobData: z.infer<typeof createJobSchema>) => {
+    return apiClient.post("/job/create", jobData);
 };
