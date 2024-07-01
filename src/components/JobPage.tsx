@@ -38,7 +38,7 @@ export default function JobPage({ job, goToJobPage }: { job: JobItem, goToJobPag
             </CardContent>
 
             <CardFooter className="flex flex-col items-start gap-y-4">
-                <div className="flex flex-wrap gap-x-2">
+                <div className="flex flex-wrap gap-2">
                     <Tags className="mr-2" />
                     {job.categories.map(category => (
                         <Badge key={category}>{category}</Badge>
