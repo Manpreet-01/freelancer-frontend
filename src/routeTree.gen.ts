@@ -24,6 +24,9 @@ const LoginLazyImport = createFileRoute('/login')()
 const JobsLazyImport = createFileRoute('/jobs')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
+const searchSearchLazyImport = createFileRoute('/(search)/search')()
+const jobsJobsIndexLazyImport = createFileRoute('/(jobs)/jobs/')()
+const jobsJobidLazyImport = createFileRoute('/(jobs)/job/$_id')()
 
 // Create/Update Routes
 
@@ -66,6 +69,27 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const searchSearchLazyRoute = searchSearchLazyImport
+  .update({
+    path: '/search',
+    getParentRoute: () => rootRoute,
+  } as any)
+  .lazy(() => import('./routes/(search)/search.lazy').then((d) => d.Route))
+
+const jobsJobsIndexLazyRoute = jobsJobsIndexLazyImport
+  .update({
+    path: '/jobs/',
+    getParentRoute: () => rootRoute,
+  } as any)
+  .lazy(() => import('./routes/(jobs)/jobs/index.lazy').then((d) => d.Route))
+
+const jobsJobidLazyRoute = jobsJobidLazyImport
+  .update({
+    path: '/job/$_id',
+    getParentRoute: () => rootRoute,
+  } as any)
+  .lazy(() => import('./routes/(jobs)/job/$_id.lazy').then((d) => d.Route))
 
 // Populate the FileRoutesByPath interface
 
@@ -127,6 +151,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchJobsLazyImport
       parentRoute: typeof rootRoute
     }
+    '/(search)/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof searchSearchLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/(jobs)/job/$_id': {
+      id: '/job/$_id'
+      path: '/job/$_id'
+      fullPath: '/job/$_id'
+      preLoaderRoute: typeof jobsJobidLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/(jobs)/jobs/': {
+      id: '/jobs/'
+      path: '/jobs'
+      fullPath: '/jobs'
+      preLoaderRoute: typeof jobsJobsIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -141,6 +186,9 @@ export const routeTree = rootRoute.addChildren({
   ProfileLazyRoute,
   RegisterLazyRoute,
   SearchJobsLazyRoute,
+  searchSearchLazyRoute,
+  jobsJobidLazyRoute,
+  jobsJobsIndexLazyRoute,
 })
 
 /* prettier-ignore-end */
@@ -158,7 +206,10 @@ export const routeTree = rootRoute.addChildren({
         "/not-found",
         "/profile",
         "/register",
-        "/search-jobs"
+        "/search-jobs",
+        "/search",
+        "/job/$_id",
+        "/jobs/"
       ]
     },
     "/": {
@@ -184,6 +235,15 @@ export const routeTree = rootRoute.addChildren({
     },
     "/search-jobs": {
       "filePath": "search-jobs.lazy.tsx"
+    },
+    "/search": {
+      "filePath": "(search)/search.lazy.tsx"
+    },
+    "/job/$_id": {
+      "filePath": "(jobs)/job/$_id.lazy.tsx"
+    },
+    "/jobs/": {
+      "filePath": "(jobs)/jobs/index.lazy.tsx"
     }
   }
 }

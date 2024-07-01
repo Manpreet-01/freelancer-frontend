@@ -66,3 +66,7 @@ export const getProfile = () => {
 export const getJobs = () => {
     return apiClient.get("/job/get-all");
 };
+
+export const getJobsById = (id: string) => {
+    return apiClient.get(`/job/get?id=${id}`);
+};
