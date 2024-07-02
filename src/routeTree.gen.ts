@@ -19,6 +19,7 @@ import { Route as rootRoute } from './routes/__root'
 const SearchJobsLazyImport = createFileRoute('/search-jobs')()
 const RegisterLazyImport = createFileRoute('/register')()
 const ProfileLazyImport = createFileRoute('/profile')()
+const NotfoundLazyImport = createFileRoute('/notfound')()
 const NotFoundLazyImport = createFileRoute('/not-found')()
 const LoginLazyImport = createFileRoute('/login')()
 const JobsLazyImport = createFileRoute('/jobs')()
@@ -46,6 +47,11 @@ const ProfileLazyRoute = ProfileLazyImport.update({
   path: '/profile',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/profile.lazy').then((d) => d.Route))
+
+const NotfoundLazyRoute = NotfoundLazyImport.update({
+  path: '/notfound',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/notfound.lazy').then((d) => d.Route))
 
 const NotFoundLazyRoute = NotFoundLazyImport.update({
   path: '/not-found',
@@ -148,6 +154,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotFoundLazyImport
       parentRoute: typeof rootRoute
     }
+    '/notfound': {
+      id: '/notfound'
+      path: '/notfound'
+      fullPath: '/notfound'
+      preLoaderRoute: typeof NotfoundLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -215,6 +228,7 @@ export const routeTree = rootRoute.addChildren({
   JobsLazyRoute,
   LoginLazyRoute,
   NotFoundLazyRoute,
+  NotfoundLazyRoute,
   ProfileLazyRoute,
   RegisterLazyRoute,
   SearchJobsLazyRoute,
@@ -238,6 +252,7 @@ export const routeTree = rootRoute.addChildren({
         "/jobs",
         "/login",
         "/not-found",
+        "/notfound",
         "/profile",
         "/register",
         "/search-jobs",
@@ -262,6 +277,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/not-found": {
       "filePath": "not-found.lazy.tsx"
+    },
+    "/notfound": {
+      "filePath": "notfound.lazy.tsx"
     },
     "/profile": {
       "filePath": "profile.lazy.tsx"

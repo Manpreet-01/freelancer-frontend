@@ -8,6 +8,7 @@ import { z } from "zod";
 export const apiClient = axios.create({
     baseURL: import.meta.env.VITE_SERVER_URL,
     withCredentials: true,
+    timeout: 10000
 });
 
 

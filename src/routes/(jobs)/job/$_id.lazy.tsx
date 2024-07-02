@@ -5,6 +5,7 @@ import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-rout
 import { toast } from '@/components/ui/use-toast';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
+import { getApiErrMsg } from '@/lib/utils';
 
 
 type Params = {
@@ -20,29 +21,25 @@ export const Route = createLazyFileRoute('/(jobs)/job/$_id')({
       const res = await getJobsById(_id);
       const job = res.data.data.job;
       if (!job) {
-
-        toast({
-          title: 'Job not found.',
-          description: "Unable to find the Job",
-          variant: 'destructive'
-        });
-
         throw redirect({
-          to: '/jobs',
+          to: '/notfound',
         });
       }
-
       return job;
     }
     catch (error: any) {
       console.error("error in fetch job with id");
       console.error(error);
 
-      if (error.isRedirect && error.to === '/jobs') {
-        throw error;
-      }
+      toast({
+        title: 'Oops! An Error Occured',
+        description: getApiErrMsg(error, "Unable to get the Job"),
+        variant: 'destructive'
+      });
 
-      return null;
+      throw redirect({
+        to: '/notfound',
+      });
     }
   },
   component: JobPageLayout,

@@ -1,4 +1,4 @@
-import { createJob, updateJob, getJobsById } from '@/lib/apiClient';
+import { updateJob, getJobsById } from '@/lib/apiClient';
 import type { JobItem } from '@/types/job.types';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { toast } from '@/components/ui/use-toast';
@@ -13,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { createJobSchema } from '../post/index.lazy';
 import { Textarea } from '@/components/ui/textarea';
+import { getApiErrMsg } from '@/lib/utils';
 
 type Params = {
   _id: string;
@@ -26,29 +27,26 @@ export const Route = createLazyFileRoute('/(jobs)/job/edit/$_id')({
       const res = await getJobsById(_id);
       const job = res.data.data.job;
       if (!job) {
-
-        toast({
-          title: 'Job not found.',
-          description: "Unable to find the Job",
-          variant: 'destructive'
-        });
-
         throw redirect({
-          to: '/jobs',
+          to: '/notfound',
         });
       }
-
       return job;
     }
     catch (error: any) {
       console.error("error in fetch job with id");
       console.error(error);
 
-      if (error.isRedirect && error.to === '/jobs') {
-        throw error;
-      }
+      toast({
+        title: 'Oops! An Error Occured',
+        description: getApiErrMsg(error, "Unable to get the Job"),
+        variant: 'destructive'
+      });
 
-      return null;
+      throw redirect({
+        to: '/notfound',
+      });
+
     }
   },
   component: EditJobPage,
