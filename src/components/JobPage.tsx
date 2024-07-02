@@ -1,15 +1,15 @@
 import { timeSince } from "@/lib/timeFormatter";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
-import { DollarSign, Tags, Timer, TimerReset, Wallet } from "lucide-react";
+import { DollarSign, Edit, Tags, Timer, TimerReset, Trash2, Wallet } from "lucide-react";
 
 import type { JobItem } from "@/types/job.types";
 
 
-export default function JobPage({ job, goToJobPage }: { job: JobItem, goToJobPage: any; }) {
+export default function JobPage({ job, onDelete, onClickEdit }: { job: JobItem, onDelete: any, onClickEdit:any }) {
 
     return (
-        <Card className="m-4 mt-8 p-2" onClick={() => goToJobPage(job._id)}>
+        <Card className="m-4 mt-8 p-2">
             <CardHeader>
                 <CardTitle>{job.title}</CardTitle>
             </CardHeader>
@@ -34,12 +34,12 @@ export default function JobPage({ job, goToJobPage }: { job: JobItem, goToJobPag
                     {timeSince(job.createdAt)}
                 </div>
 
-                <CardDescription className="my-4 text-md">{job.description}</CardDescription>
+                <CardDescription className="whitespace-pre my-4 text-md">{job.description}</CardDescription>
             </CardContent>
 
             <CardFooter className="flex flex-col items-start gap-y-4">
-                <div className="flex flex-wrap gap-x-2">
-                    <Tags className="mr-2" />
+                <div className="flex flex-wrap gap-2">
+                    {(job.categories.length != 0 || job.tags.length) != 0 && <Tags className="mr-2" />}
                     {job.categories.map(category => (
                         <Badge key={category}>{category}</Badge>
                     ))}
@@ -47,6 +47,11 @@ export default function JobPage({ job, goToJobPage }: { job: JobItem, goToJobPag
                     {job.tags.map(tag => (
                         <Badge variant="outline" key={tag}>{tag}</Badge>
                     ))}
+                </div>
+
+                <div className="flex gap-x-4 pr-4 justify-end w-full">
+                    <Edit className="cursor-pointer hover:scale-110" onClick={onClickEdit} />
+                    <Trash2 className="text-red-500 cursor-pointer hover:scale-110" onClick={onDelete} />
                 </div>
             </CardFooter>
         </Card>

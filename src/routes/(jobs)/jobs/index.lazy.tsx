@@ -1,15 +1,36 @@
 import JobCard from '@/components/JobCard';
-import { getJobs } from '@/lib/apiClient';
+import { getClientJobs, getJobs } from '@/lib/apiClient';
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
 
 import type { JobItem } from '@/types/job.types';
 import { toast } from '@/components/ui/use-toast';
+import { RootState, store } from '@/store/store';
+import { useSelector } from 'react-redux';
+import { Button } from '@/components/ui/button';
 
 export async function jobsLoader() {
     try {
-        const res = await getJobs();
-        const jobs = res.data.data.jobs;
-        // console.log(" jobs ;;;;; ", jobs);
+        const user = store.getState().user.userData;
+
+        function getApi() {
+            if (user?.role === 'client') {
+                return getClientJobs(user._id);
+            }
+            else if (user?.role === 'freelancer') {
+                return getJobs();
+            }
+            else {
+                const msg = "Invalid client role detected.";
+                console.error(msg);
+                alert(msg);
+                throw new Error(msg);
+            }
+        }
+
+        const res = await getApi();
+        // @ts-ignore
+        const jobs = res.data?.data?.jobs;
+        console.log(" jobs ;;;;; ", jobs);
         return jobs;
     }
     catch (error) {
@@ -26,24 +47,43 @@ export async function jobsLoader() {
 
 export const Route = createLazyFileRoute('/(jobs)/jobs/')({
     component: JobsPage,
+    // @ts-ignore
     loader: jobsLoader,
 });
 
 function JobsPage() {
     const jobs = Route.useLoaderData({}) as JobItem[];
+    const user = useSelector((state: RootState) => state.user.userData);
+
     const navigate = useNavigate();
 
     function handleGoToJobPage(id: string) {
         navigate({ to: `/job/${id}` });
     }
 
-    if (!jobs || !jobs.length) return <h1>No Jobs here</h1>;
+    function handlePostOnClick() {
+        navigate({ to: '/job/post' });
+    }
+
 
     return (
-        <div className="flex flex-col gap-4 p-4 mt-4">
-            {jobs.map(job =>
-                <JobCard key={job._id} job={job} goToJobPage={handleGoToJobPage} />
+        <>
+            {!jobs.length && (
+                <h1>No Jobs here</h1>
             )}
-        </div>
+
+            {user?.role == "client" && (
+                <div className='flex m-2 px-4 justify-end'>
+                    <Button onClick={handlePostOnClick}>Post</Button>
+                </div>
+            )}
+
+            <div className="flex flex-col gap-4 p-4 mt-4">
+                {jobs.map(job =>
+                    <JobCard key={job._id} job={job} goToJobPage={handleGoToJobPage} />
+                )}
+            </div>
+
+        </>
     );
 }
