@@ -96,5 +96,5 @@ function JobPageLayout() {
 
   if (!job) return null;
 
-  return <JobPage job={job} onDelete={handleDeleteJob} onClickEdit={handleGoToEditJob} />;
+  return <JobPage job={job} user={user} onDelete={handleDeleteJob} onClickEdit={handleGoToEditJob} />;
 }

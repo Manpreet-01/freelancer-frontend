@@ -3,7 +3,7 @@ import type { JobItem } from '@/types/job.types';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { toast } from '@/components/ui/use-toast';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
+import { RootState, store } from '@/store/store';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
@@ -24,28 +24,58 @@ export const Route = createLazyFileRoute('/(jobs)/job/edit/$_id')({
   // @ts-ignore
   loader: async ({ params: { _id } }: { params: Params; }) => {
     try {
+      const user = store.getState().user.userData;
+      console.log("s  sss ss ", user);
+
+      // user validations
+      if (!user) throw redirect({ to: '/login' });
+
+      if (user.role !== 'client') {
+        toast({
+          title: 'Access denied',
+          description: "Access not allowed, Unauthorize request",
+          variant: 'destructive'
+        });
+        throw redirect({ to: '/notfound' });
+      }
+      // job validations
       const res = await getJobsById(_id);
       const job = res.data.data.job;
       if (!job) {
-        throw redirect({
-          to: '/notfound',
+        toast({
+          title: 'Error',
+          description: "Not found, faild to load the job.",
+          variant: 'destructive'
         });
+        throw redirect({ to: '/notfound' });
       }
+
+      if (user._id !== job.createdBy) {
+        toast({
+          title: 'Access denied',
+          description: "Access not allowed, Unauthorize request",
+          variant: 'destructive'
+        });
+        throw redirect({ to: '/notfound' });
+      }
+
       return job;
     }
     catch (error: any) {
       console.error("error in fetch job with id");
       console.error(error);
 
-      toast({
-        title: 'Oops! An Error Occured',
-        description: getApiErrMsg(error, "Unable to get the Job"),
-        variant: 'destructive'
-      });
-
-      throw redirect({
-        to: '/notfound',
-      });
+      if (typeof error.to == 'string') {
+        throw redirect({ to: error.to });
+      }
+      else {
+        toast({
+          title: 'Oops! An Error Occured',
+          description: getApiErrMsg(error, "Unable to get the Job"),
+          variant: 'destructive'
+        });
+        throw redirect({ to: '/notfound' });
+      }
 
     }
   },

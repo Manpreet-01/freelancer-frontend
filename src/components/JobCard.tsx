@@ -9,7 +9,7 @@ import type { JobItem } from "@/types/job.types";
 export default function JobCard({ job, goToJobPage }: { job: JobItem, goToJobPage: any; }) {
 
     return (
-        <Card className="p-2 hover:border-white cursor-pointer flex flex-col sm:flex-row justify-between items-center" onClick={() => goToJobPage(job._id)}>
+        <Card className="p-2 hover:border-white cursor-pointer flex flex-col sm:flex-row justify-between items-start sm:items-center" onClick={() => goToJobPage(job._id)}>
             <div className="flex flex-col gap-y-2 justify-between items-start">
                 <CardHeader className="flex gap-y-4">
                     <CardTitle>{job.title}</CardTitle>

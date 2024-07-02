@@ -4,9 +4,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { DollarSign, Edit, Tags, Timer, TimerReset, Trash2, Wallet } from "lucide-react";
 
 import type { JobItem } from "@/types/job.types";
+import { userData } from "@/types/user.types";
 
 
-export default function JobPage({ job, onDelete, onClickEdit }: { job: JobItem, onDelete: any, onClickEdit:any }) {
+export default function JobPage({ job, user, onDelete, onClickEdit }: { job: JobItem, user: userData | null, onDelete: any, onClickEdit: any; }) {
 
     return (
         <Card className="m-4 mt-8 p-2">
@@ -34,7 +35,7 @@ export default function JobPage({ job, onDelete, onClickEdit }: { job: JobItem, 
                     {timeSince(job.createdAt)}
                 </div>
 
-                <CardDescription className="whitespace-pre my-4 text-md">{job.description}</CardDescription>
+                <CardDescription className="whitespace-break-spaces my-4 text-md">{job.description}</CardDescription>
             </CardContent>
 
             <CardFooter className="flex flex-col items-start gap-y-4">
@@ -49,10 +50,12 @@ export default function JobPage({ job, onDelete, onClickEdit }: { job: JobItem, 
                     ))}
                 </div>
 
-                <div className="flex gap-x-4 pr-4 justify-end w-full">
-                    <Edit className="cursor-pointer hover:scale-110" onClick={onClickEdit} />
-                    <Trash2 className="text-red-500 cursor-pointer hover:scale-110" onClick={onDelete} />
-                </div>
+                {user?.role === 'client' &&
+                    <div className="flex gap-x-4 pr-4 justify-end w-full">
+                        <Edit className="cursor-pointer hover:scale-110" onClick={onClickEdit} />
+                        <Trash2 className="text-red-500 cursor-pointer hover:scale-110" onClick={onDelete} />
+                    </div>
+                }
             </CardFooter>
         </Card>
     );
