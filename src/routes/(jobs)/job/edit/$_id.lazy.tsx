@@ -1,4 +1,7 @@
-import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
+import { createJob, updateJob, getJobsById } from '@/lib/apiClient';
+import type { JobItem } from '@/types/job.types';
+import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
+import { toast } from '@/components/ui/use-toast';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,60 +11,96 @@ import { Input } from '@/components/ui/input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
-import { createJob } from '@/lib/apiClient';
-import { toast } from "@/components/ui/use-toast";
+import { createJobSchema } from '../post/index.lazy';
 import { Textarea } from '@/components/ui/textarea';
 
+type Params = {
+  _id: string;
+};
 
 // TODO: add validation ::: allowed for client only page
-export const Route = createLazyFileRoute('/(jobs)/job/post/')({
-  component: PostNewJobPage
+export const Route = createLazyFileRoute('/(jobs)/job/edit/$_id')({
+  // @ts-ignore
+  loader: async ({ params: { _id } }: { params: Params; }) => {
+    try {
+      const res = await getJobsById(_id);
+      const job = res.data.data.job;
+      if (!job) {
+
+        toast({
+          title: 'Job not found.',
+          description: "Unable to find the Job",
+          variant: 'destructive'
+        });
+
+        throw redirect({
+          to: '/jobs',
+        });
+      }
+
+      return job;
+    }
+    catch (error: any) {
+      console.error("error in fetch job with id");
+      console.error(error);
+
+      if (error.isRedirect && error.to === '/jobs') {
+        throw error;
+      }
+
+      return null;
+    }
+  },
+  component: EditJobPage,
 });
 
-export const createJobSchema = z.object({
-  title: z.string().min(1, { message: "Title is required." }),
-  description: z.string().min(1, { message: "Description is required." }),
-  userId: z.string().min(1, { message: "userId is required." }),
+
+
+export const updateJobSchema = createJobSchema.extend({
+  jobId: z.string({
+    required_error: "JobId is required",
+    invalid_type_error: "JobId must be a string",
+  })
 });
 
-function PostNewJobPage() {
+function EditJobPage() {
   const user = useSelector((state: RootState) => state.user.userData);
-  const navigate = useNavigate()
+  const job = Route.useLoaderData<JobItem | null>();
+  const navigate = useNavigate();
 
-  const form = useForm<z.infer<typeof createJobSchema>>({
-    resolver: zodResolver(createJobSchema),
+  const form = useForm<z.infer<typeof updateJobSchema>>({
+    resolver: zodResolver(updateJobSchema),
     defaultValues: {
       userId: user?._id || '',
-      title: '',
-      description: '',
+      jobId: job?._id || '',
+      title: job?.title || '',
+      description: job?.description || '',
     }
   });
 
-  async function onSubmit(formData: z.infer<typeof createJobSchema>) {
+  async function onSubmit(formData: z.infer<typeof updateJobSchema>) {
     try {
       console.log("xxx ", formData);
 
-      const res = await createJob(formData);
+      const res = await updateJob(formData);
       console.log('res --- ', res);
 
       toast({
         title: "Success!",
-        description: res.data.message || "Job Posted successfully",
+        description: res.data.message || "Job Updated successfully",
         variant: 'success'
       });
 
-      const jobId = res.data.data.job._id;
-
-      navigate({ to: `/job/${jobId}` });
+      navigate({ to: `/job/${job?._id}` });
     }
     catch (err) {
-      console.error("---> error in posting job ");
+      console.error("---> error in updating job ");
       console.error(err);
 
       toast({
-        title: "Failed to Post Job!",
+        title: "Failed to Update Job!",
         // @ts-ignore
-        description: err.response?.data?.message || err.response?.message || err.message || "Failed to post job.",
+        description: err.response?.data?.message || err.response?.message || err.message || "Failed to Update job.",
         variant: 'destructive'
       });
     }
@@ -72,7 +111,7 @@ function PostNewJobPage() {
       <div className='m-4'>
         <Card className="mx-auto mt-8">
           <CardHeader>
-            <CardTitle className="text-2xl">Post Job</CardTitle>
+            <CardTitle className="text-2xl">Edit Job</CardTitle>
             <CardDescription>
               Enter the job details
             </CardDescription>
@@ -107,7 +146,8 @@ function PostNewJobPage() {
                         <FormItem>
                           <FormLabel>Description</FormLabel>
                           <FormControl>
-                            <Textarea placeholder="Description" {...field} />
+                            {/* <Input placeholder="Description" {...field} /> */}
+                            <Textarea placeholder="Type Job Description here." {...field} />
                           </FormControl>
                           {/* <FormDescription>
                                                 Enter your description here.
@@ -119,7 +159,7 @@ function PostNewJobPage() {
                   </div>
 
                   <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? "Saving..." : "Post"}
+                    {form.formState.isSubmitting ? "Saving..." : "Save"}
                   </Button>
                 </div>
               </form>

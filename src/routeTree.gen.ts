@@ -28,6 +28,7 @@ const searchSearchLazyImport = createFileRoute('/(search)/search')()
 const jobsJobsIndexLazyImport = createFileRoute('/(jobs)/jobs/')()
 const jobsJobidLazyImport = createFileRoute('/(jobs)/job/$_id')()
 const jobsJobPostIndexLazyImport = createFileRoute('/(jobs)/job/post/')()
+const jobsJobEditidLazyImport = createFileRoute('/(jobs)/job/edit/$_id')()
 
 // Create/Update Routes
 
@@ -100,6 +101,13 @@ const jobsJobPostIndexLazyRoute = jobsJobPostIndexLazyImport
   .lazy(() =>
     import('./routes/(jobs)/job/post/index.lazy').then((d) => d.Route),
   )
+
+const jobsJobEditidLazyRoute = jobsJobEditidLazyImport
+  .update({
+    path: '/job/edit/$_id',
+    getParentRoute: () => rootRoute,
+  } as any)
+  .lazy(() => import('./routes/(jobs)/job/edit/$_id.lazy').then((d) => d.Route))
 
 // Populate the FileRoutesByPath interface
 
@@ -182,6 +190,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof jobsJobsIndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/(jobs)/job/edit/$_id': {
+      id: '/job/edit/$_id'
+      path: '/job/edit/$_id'
+      fullPath: '/job/edit/$_id'
+      preLoaderRoute: typeof jobsJobEditidLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/(jobs)/job/post/': {
       id: '/job/post/'
       path: '/job/post'
@@ -206,6 +221,7 @@ export const routeTree = rootRoute.addChildren({
   searchSearchLazyRoute,
   jobsJobidLazyRoute,
   jobsJobsIndexLazyRoute,
+  jobsJobEditidLazyRoute,
   jobsJobPostIndexLazyRoute,
 })
 
@@ -228,6 +244,7 @@ export const routeTree = rootRoute.addChildren({
         "/search",
         "/job/$_id",
         "/jobs/",
+        "/job/edit/$_id",
         "/job/post/"
       ]
     },
@@ -263,6 +280,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/jobs/": {
       "filePath": "(jobs)/jobs/index.lazy.tsx"
+    },
+    "/job/edit/$_id": {
+      "filePath": "(jobs)/job/edit/$_id.lazy.tsx"
     },
     "/job/post/": {
       "filePath": "(jobs)/job/post/index.lazy.tsx"

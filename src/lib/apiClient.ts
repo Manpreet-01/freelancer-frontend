@@ -1,3 +1,4 @@
+import { deleteJobPayload } from "@/routes/(jobs)/job/$_id.lazy";
 import { createJobSchema } from "@/routes/(jobs)/job/post/index.lazy";
 import { LoginFormSchema } from "@/routes/login.lazy";
 import axios from "axios";
@@ -65,8 +66,20 @@ export const getProfile = () => {
     return apiClient.post("/user/profile");
 };
 
+export const createJob = (jobData: z.infer<typeof createJobSchema>) => {
+    return apiClient.post("/job/create", jobData);
+};
+
 export const getJobs = () => {
     return apiClient.get("/job/get-all");
+};
+
+export const updateJob = (data) => {
+    return apiClient.put("/job/update", data);
+};
+
+export const deleteJob = (data: deleteJobPayload) => {
+    return apiClient.delete("/job/delete", { data });
 };
 
 export const getJobsById = (id: string) => {
@@ -75,8 +88,4 @@ export const getJobsById = (id: string) => {
 
 export const getClientJobs = (id: string) => {
     return apiClient.get(`/job/client/get-all?id=${id}`);
-};
-
-export const createJob = (jobData: z.infer<typeof createJobSchema>) => {
-    return apiClient.post("/job/create", jobData);
 };
