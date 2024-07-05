@@ -1,13 +1,14 @@
 import JobCard from '@/components/job/JobCard';
 import { getClientJobs, getJobs } from '@/lib/apiClient';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
-
 import type { JobItem } from '@/types/job.types';
 import { toast } from '@/components/ui/use-toast';
 import { RootState, store } from '@/store/store';
 import { useSelector } from 'react-redux';
 import { Button } from '@/components/ui/button';
 import { getApiErrMsg } from '@/lib/utils';
+import { deleteJobPayload } from "@/routes/(jobs)/job/$_id.lazy";
+import { deleteJob } from "@/lib/apiClient";
 
 export const Route = createLazyFileRoute('/(jobs)/jobs/')({
     // @ts-ignore
@@ -56,14 +57,38 @@ function JobsPage() {
 
     const navigate = useNavigate();
 
-    function handleGoToJobPage(id: string) {
-        navigate({ to: `/job/${id}` });
-    }
+    const handlePostOnClick = () => navigate({ to: '/job/post' });
+    const handleGoToJobPage = (jobId: string) => navigate({ to: `/job/${jobId}` });
+    const handleGoToEditJob = (jobId: string) => navigate({ to: `/job/edit/${jobId}` });
 
-    function handlePostOnClick() {
-        navigate({ to: '/job/post' });
-    }
+    async function handleDeleteJob(jobId: string) {
+        const payload: deleteJobPayload = {
+            jobId,
+            userId: user?._id || ""
+        };
 
+        try {
+            const res = await deleteJob(payload);
+
+            toast({
+                title: "Success!",
+                description: res.data.message || "Job deleted successfully",
+                variant: 'success'
+            });
+
+            navigate({ to: '' });  // refresh page after delete job
+        }
+        catch (err: any) {
+            console.error('err in delete job --- ');
+            console.error(err);
+
+            toast({
+                title: 'Failed to delete job.',
+                description: err.response.data.message,
+                variant: 'destructive'
+            });
+        }
+    }
 
     return (
         <>
@@ -79,10 +104,17 @@ function JobsPage() {
 
             <div className="flex flex-col gap-4 p-4 mt-4">
                 {jobs.map(job =>
-                    <JobCard key={job._id} job={job} user={user} goToJobPage={handleGoToJobPage} />
+                    <JobCard
+                        key={job._id}
+                        job={job}
+                        user={user}
+                        goToJobPage={handleGoToJobPage}
+                        onEdit={handleGoToEditJob}
+                        onDelete={handleDeleteJob}
+                    />
                 )}
             </div>
 
         </>
     );
-}
+};

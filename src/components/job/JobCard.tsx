@@ -2,20 +2,32 @@ import { timeSince } from "@/lib/timeFormatter";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { DollarSign, Tags, Timer, TimerReset, Wallet } from "lucide-react";
-
 import type { JobItem } from "@/types/job.types";
 import { userData } from "@/types/user.types";
-import { Button } from "../ui/button";
-import { HeartButton } from "./HeartButton";
+import { ClientJobActions, FreelancerJobActions } from "./JobActions";
+import { MouseEvent } from "react";
 
 
 type JobCardProps = {
     job: JobItem,
     user: userData | null,
     goToJobPage: any,
+    onEdit: (jobId: string) => void,
+    onDelete: (jobId: string) => void,
 };
 
-export default function JobCard({ job, goToJobPage, user }: JobCardProps) {
+export default function JobCard({ job, goToJobPage, user, onEdit, onDelete }: JobCardProps) {
+    function handleJobEdit(e: MouseEvent<HTMLButtonElement>) {
+        e.preventDefault();
+        e.stopPropagation();
+        onEdit(job._id);
+    }
+
+    function handleJobDelete(e: MouseEvent<HTMLButtonElement>) {
+        e.preventDefault();
+        e.stopPropagation();
+        onDelete(job._id);
+    }
 
     return (
         <Card className="p-2 hover:border-white cursor-pointer flex flex-col sm:flex-row justify-between items-start sm:items-center" onClick={() => goToJobPage(job._id)}>
@@ -59,14 +71,17 @@ export default function JobCard({ job, goToJobPage, user }: JobCardProps) {
                         ))}
                     </div>
 
-                    {user?.role === 'freelancer' &&
-                        <div className="flex sm:hidden justify-end gap-x-4 mt-4 w-full">
-                            <Button className="hover:scale-110">
-                                Apply Job
-                            </Button>
-                            <HeartButton userId={user._id} job={job} className="disabled:cursor-not-allowed hover:scale-110" />
-                        </div>
-                    }
+                    <div className="flex sm:hidden justify-end gap-x-4 mt-4 w-full">
+                        {user?.role === 'freelancer' &&
+                            <FreelancerJobActions user={user} job={job} />
+                        }
+                        {user?.role === 'client' &&
+                            <ClientJobActions
+                                onEdit={handleJobEdit}
+                                onDelete={handleJobDelete}
+                            />
+                        }
+                    </div>
                 </CardFooter>
             </div>
             <CardContent className="hidden sm:flex flex-col gap-y-2 p-6">
@@ -89,16 +104,19 @@ export default function JobCard({ job, goToJobPage, user }: JobCardProps) {
                     <div>{timeSince(job.createdAt)}</div>
                 </div>
 
-                {user?.role === 'freelancer' &&
-                    <div className="flex gap-x-4 mt-4">
-                        <Button className="hover:scale-110">
-                            Apply Job
-                        </Button>
-
-                        <HeartButton userId={user._id} job={job} className="disabled:cursor-not-allowed hover:scale-110" />
-                    </div>
-                }
+                <div className="flex gap-x-4 mt-4">
+                    {user?.role === 'freelancer' &&
+                        <FreelancerJobActions user={user} job={job} />
+                    }
+                    {user?.role === 'client' &&
+                        <ClientJobActions
+                            onEdit={handleJobEdit}
+                            onDelete={handleJobDelete}
+                        />
+                    }
+                </div>
             </CardContent>
         </Card>
     );
 }
+

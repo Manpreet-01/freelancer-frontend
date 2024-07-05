@@ -7,12 +7,16 @@ import { useSelector } from 'react-redux';
 import { RootState, store } from '@/store/store';
 import { getApiErrMsg } from '@/lib/utils';
 
-
 export const Route = createLazyFileRoute('/(jobs)/job/$_id')({
   // @ts-ignore
   loader: jobPageLoader,
   component: JobPageLayout,
 });
+
+
+type Params = {
+  _id: string;
+};
 
 async function jobPageLoader({ params: { _id } }: { params: Params; }) {
   const user = store.getState().user.userData;
@@ -48,6 +52,12 @@ async function jobPageLoader({ params: { _id } }: { params: Params; }) {
   }
 }
 
+
+export type deleteJobPayload = {
+  userId: string,
+  jobId: string,
+};
+
 function JobPageLayout() {
   const user = useSelector((state: RootState) => state.user.userData);
   const job = Route.useLoaderData<JobItem | null>();
@@ -71,9 +81,7 @@ function JobPageLayout() {
         variant: 'success'
       });
 
-
       navigate({ to: '/jobs' });
-
     }
     catch (err: any) {
       console.error('err in delete job --- ');
@@ -87,21 +95,8 @@ function JobPageLayout() {
     }
   }
 
-  async function handleGoToEditJob() {
-    navigate({ to: `/job/edit/${job?._id}` });
-  }
+  const handleGoToEditJob = () => navigate({ to: `/job/edit/${job?._id}` });
 
   if (!job) return null;
-
-  return <JobPage job={job} user={user} onDelete={handleDeleteJob} onClickEdit={handleGoToEditJob} />;
+  return <JobPage job={job} user={user} onDelete={handleDeleteJob} onEdit={handleGoToEditJob} />;
 }
-
-
-type Params = {
-  _id: string;
-};
-
-export type deleteJobPayload = {
-  userId: string,
-  jobId: string,
-};

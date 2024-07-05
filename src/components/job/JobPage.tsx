@@ -1,14 +1,13 @@
 import { timeSince } from "@/lib/timeFormatter";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import { DollarSign, Edit, Tags, Timer, TimerReset, Trash2, Wallet } from "lucide-react";
+import { DollarSign, Tags, Timer, TimerReset, Wallet } from "lucide-react";
 import type { JobItem } from "@/types/job.types";
 import { userData } from "@/types/user.types";
-import { Button } from "../ui/button";
-import { HeartButton } from "./HeartButton";
+import { ClientJobActions, FreelancerJobActions } from "./JobActions";
 
 
-export default function JobPage({ job, user, onDelete, onClickEdit }: { job: JobItem, user: userData | null, onDelete: any, onClickEdit: any; }) {
+export default function JobPage({ job, user, onDelete, onEdit }: { job: JobItem, user: userData | null, onDelete: any, onEdit: any; }) {
     return (
         <Card className="m-4 mt-8 p-2">
             <CardHeader>
@@ -52,18 +51,13 @@ export default function JobPage({ job, user, onDelete, onClickEdit }: { job: Job
 
                 {user?.role === 'client' &&
                     <div className="flex gap-x-4 pr-4 justify-end w-full">
-                        <Edit className="cursor-pointer hover:scale-110" onClick={onClickEdit} />
-                        <Trash2 className="text-red-500 cursor-pointer hover:scale-110" onClick={onDelete} />
+                        <ClientJobActions onEdit={onEdit} onDelete={onDelete}  />
                     </div>
                 }
 
                 {user?.role === 'freelancer' &&
                     <div className="flex gap-x-4 pr-4 justify-end w-full">
-                        <Button className="hover:scale-110">
-                            Apply Job
-                        </Button>
-
-                        <HeartButton userId={user._id} job={job} className="disabled:cursor-not-allowed hover:scale-110" />
+                        <FreelancerJobActions user={user} job={job} />
                     </div>
                 }
             </CardFooter>

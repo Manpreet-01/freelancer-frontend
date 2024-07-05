@@ -9,10 +9,11 @@ import { getApiErrMsg } from "@/lib/utils";
 type HeartButtonProps = {
     userId: string,
     job: JobItem,
-    className: string;
+    className: string,
+    size?: "default" | "sm" | "lg" | "icon" | null | undefined,
 };
 
-export function HeartButton({ userId, job, className }: HeartButtonProps) {
+export function HeartButton({ userId, job, className, size }: HeartButtonProps) {
     const [isSaved, setIsSaved] = useState(job.isSaved);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -46,7 +47,7 @@ export function HeartButton({ userId, job, className }: HeartButtonProps) {
     }
 
     return (
-        <Button className={className} variant="outline" disabled={isLoading} onClick={handleIsSavedToggle} >
+        <Button size={size} className={className} variant="outline" disabled={isLoading} onClick={handleIsSavedToggle} >
             {isLoading ? <Loader2 className="animate-spin" /> :
                 <Heart
                     className={`${isSaved ? "text-red-700 fill-red-600" : ""} `}
