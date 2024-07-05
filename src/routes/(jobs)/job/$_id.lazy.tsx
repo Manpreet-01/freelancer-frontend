@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { RootState, store } from '@/store/store';
 import { getApiErrMsg } from '@/lib/utils';
 
+
 export const Route = createLazyFileRoute('/(jobs)/job/$_id')({
   // @ts-ignore
   loader: jobPageLoader,
@@ -61,10 +62,9 @@ export type deleteJobPayload = {
 function JobPageLayout() {
   const user = useSelector((state: RootState) => state.user.userData);
   const job = Route.useLoaderData<JobItem | null>();
+  const { applying: isApplying } = Route.useSearch<{ applying: boolean; }>();
 
   const navigate = useNavigate();
-
-  console.log("test ", job);
 
   async function handleDeleteJob() {
     const payload: deleteJobPayload = {
@@ -95,8 +95,26 @@ function JobPageLayout() {
     }
   }
 
+  const handleCancelProposal = () => navigate({ to: `/job/${job?._id}` });
   const handleGoToEditJob = () => navigate({ to: `/job/edit/${job?._id}` });
 
+  // TODO: write logic for submit / crete proposal here...
+  async function handleSubmitProposal(jobId) {
+    console.log("submitted for JobId : ", jobId);
+  }
+
   if (!job) return null;
-  return <JobPage job={job} user={user} onDelete={handleDeleteJob} onEdit={handleGoToEditJob} />;
+  return (
+    <>
+      <JobPage
+        job={job}
+        user={user}
+        isApplying={isApplying}
+        onDelete={handleDeleteJob}
+        onEdit={handleGoToEditJob}
+        onCancelProposal={handleCancelProposal}
+        onSubmitProposal={handleSubmitProposal}
+      />
+    </>
+  );
 }
