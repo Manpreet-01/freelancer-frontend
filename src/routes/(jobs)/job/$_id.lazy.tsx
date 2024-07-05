@@ -1,4 +1,4 @@
-import JobPage from '@/components/JobPage';
+import JobPage from '@/components/job/JobPage';
 import { deleteJob, getJobsById } from '@/lib/apiClient';
 import type { JobItem } from '@/types/job.types';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';

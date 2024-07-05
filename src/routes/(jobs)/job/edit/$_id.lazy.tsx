@@ -50,6 +50,7 @@ export const Route = createLazyFileRoute('/(jobs)/job/edit/$_id')({
         throw redirect({ to: '/notfound' });
       }
 
+      // TODO: add this logic on backend also
       if (user._id !== job.createdBy) {
         toast({
           title: 'Access denied',

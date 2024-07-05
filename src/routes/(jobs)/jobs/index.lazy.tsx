@@ -1,6 +1,6 @@
-import JobCard from '@/components/JobCard';
+import JobCard from '@/components/job/JobCard';
 import { getClientJobs, getJobs } from '@/lib/apiClient';
-import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
+import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 
 import type { JobItem } from '@/types/job.types';
 import { toast } from '@/components/ui/use-toast';
@@ -9,21 +9,20 @@ import { useSelector } from 'react-redux';
 import { Button } from '@/components/ui/button';
 
 export async function jobsLoader() {
-    try {
-        const user = store.getState().user.userData;
+    const user = store.getState().user.userData;
+    if (!user) {
+        throw redirect({
+            to: '/login',
+        });
+    }
 
+    try {
         function getApi() {
             if (user?.role === 'client') {
                 return getClientJobs(user._id);
             }
             else if (user?.role === 'freelancer') {
                 return getJobs();
-            }
-            else {
-                const msg = "Invalid client role detected.";
-                console.error(msg);
-                alert(msg);
-                throw new Error(msg);
             }
         }
 
@@ -80,7 +79,7 @@ function JobsPage() {
 
             <div className="flex flex-col gap-4 p-4 mt-4">
                 {jobs.map(job =>
-                    <JobCard key={job._id} job={job} goToJobPage={handleGoToJobPage} />
+                    <JobCard key={job._id} job={job} user={user} goToJobPage={handleGoToJobPage} />
                 )}
             </div>
 

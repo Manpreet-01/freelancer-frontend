@@ -20,9 +20,7 @@ const SearchJobsLazyImport = createFileRoute('/search-jobs')()
 const RegisterLazyImport = createFileRoute('/register')()
 const ProfileLazyImport = createFileRoute('/profile')()
 const NotfoundLazyImport = createFileRoute('/notfound')()
-const NotFoundLazyImport = createFileRoute('/not-found')()
 const LoginLazyImport = createFileRoute('/login')()
-const JobsLazyImport = createFileRoute('/jobs')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 const searchSearchLazyImport = createFileRoute('/(search)/search')()
@@ -53,20 +51,10 @@ const NotfoundLazyRoute = NotfoundLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/notfound.lazy').then((d) => d.Route))
 
-const NotFoundLazyRoute = NotFoundLazyImport.update({
-  path: '/not-found',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/not-found.lazy').then((d) => d.Route))
-
 const LoginLazyRoute = LoginLazyImport.update({
   path: '/login',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/login.lazy').then((d) => d.Route))
-
-const JobsLazyRoute = JobsLazyImport.update({
-  path: '/jobs',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/jobs.lazy').then((d) => d.Route))
 
 const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
@@ -133,25 +121,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
-    '/jobs': {
-      id: '/jobs'
-      path: '/jobs'
-      fullPath: '/jobs'
-      preLoaderRoute: typeof JobsLazyImport
-      parentRoute: typeof rootRoute
-    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/not-found': {
-      id: '/not-found'
-      path: '/not-found'
-      fullPath: '/not-found'
-      preLoaderRoute: typeof NotFoundLazyImport
       parentRoute: typeof rootRoute
     }
     '/notfound': {
@@ -225,9 +199,7 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
   AboutLazyRoute,
-  JobsLazyRoute,
   LoginLazyRoute,
-  NotFoundLazyRoute,
   NotfoundLazyRoute,
   ProfileLazyRoute,
   RegisterLazyRoute,
@@ -249,9 +221,7 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/",
         "/about",
-        "/jobs",
         "/login",
-        "/not-found",
         "/notfound",
         "/profile",
         "/register",
@@ -269,14 +239,8 @@ export const routeTree = rootRoute.addChildren({
     "/about": {
       "filePath": "about.lazy.tsx"
     },
-    "/jobs": {
-      "filePath": "jobs.lazy.tsx"
-    },
     "/login": {
       "filePath": "login.lazy.tsx"
-    },
-    "/not-found": {
-      "filePath": "not-found.lazy.tsx"
     },
     "/notfound": {
       "filePath": "notfound.lazy.tsx"

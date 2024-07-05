@@ -7,5 +7,6 @@ export type JobItem = {
     createdBy: string;
     createdAt: string;
     updatedAt: string;
+    isSaved: Boolean;
     __v: number;
 };

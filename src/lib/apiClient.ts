@@ -90,3 +90,7 @@ export const getJobsById = (id: string) => {
 export const getClientJobs = (id: string) => {
     return apiClient.get(`/job/client/get-all?id=${id}`);
 };
+
+export const toggleJobIsSaved = (data: { userId: string, jobId: string }) => {
+    return apiClient.put(`/job/save/toggle`, data);
+};
