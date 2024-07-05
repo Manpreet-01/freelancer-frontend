@@ -4,52 +4,49 @@ import type { JobItem } from '@/types/job.types';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { toast } from '@/components/ui/use-toast';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
+import { RootState, store } from '@/store/store';
 import { getApiErrMsg } from '@/lib/utils';
-
-
-type Params = {
-  _id: string;
-};
-
 
 
 export const Route = createLazyFileRoute('/(jobs)/job/$_id')({
   // @ts-ignore
-  loader: async ({ params: { _id } }: { params: Params; }) => {
-    try {
-      const res = await getJobsById(_id);
-      const job = res.data.data.job;
-      if (!job) {
-        throw redirect({
-          to: '/notfound',
-        });
-      }
-      return job;
-    }
-    catch (error: any) {
-      console.error("error in fetch job with id");
-      console.error(error);
+  loader: jobPageLoader,
+  component: JobPageLayout,
+});
 
-      toast({
-        title: 'Oops! An Error Occured',
-        description: getApiErrMsg(error, "Unable to get the Job"),
-        variant: 'destructive'
-      });
+async function jobPageLoader({ params: { _id } }: { params: Params; }) {
+  const user = store.getState().user.userData;
+  if (!user) {
+    throw redirect({
+      to: '/login',
+    });
+  }
 
+  try {
+    const res = await getJobsById(_id);
+    const job = res.data.data.job;
+    if (!job) {
       throw redirect({
         to: '/notfound',
       });
     }
-  },
-  component: JobPageLayout,
-});
+    return job;
+  }
+  catch (error: any) {
+    console.error("error in fetch job with id");
+    console.error(error);
 
+    toast({
+      title: 'Oops! An Error Occured',
+      description: getApiErrMsg(error, "Unable to get the Job"),
+      variant: 'destructive'
+    });
 
-export type deleteJobPayload = {
-  userId: string,
-  jobId: string,
-};
+    throw redirect({
+      to: '/notfound',
+    });
+  }
+}
 
 function JobPageLayout() {
   const user = useSelector((state: RootState) => state.user.userData);
@@ -98,3 +95,13 @@ function JobPageLayout() {
 
   return <JobPage job={job} user={user} onDelete={handleDeleteJob} onClickEdit={handleGoToEditJob} />;
 }
+
+
+type Params = {
+  _id: string;
+};
+
+export type deleteJobPayload = {
+  userId: string,
+  jobId: string,
+};

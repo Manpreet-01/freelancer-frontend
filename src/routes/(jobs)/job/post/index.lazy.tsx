@@ -1,6 +1,6 @@
-import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
+import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
+import { RootState, store } from '@/store/store';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
@@ -15,8 +15,30 @@ import { Textarea } from '@/components/ui/textarea';
 
 // TODO: add validation ::: allowed for client only page
 export const Route = createLazyFileRoute('/(jobs)/job/post/')({
-  component: PostNewJobPage
+  component: PostNewJobPage,
+  // @ts-ignore
+  loader: postNewJobPageLoader,
 });
+
+function postNewJobPageLoader() {
+  const user = store.getState().user.userData;
+  if (!user) {
+    throw redirect({
+      to: '/login',
+    });
+  }
+
+  if (user.role !== "client") {
+    toast({
+      title: "Not Allowed!",
+      description: 'Only Cllients can Post the jobs',
+      variant: 'destructive'
+    });
+    throw redirect({
+      to: '/notfound',
+    });
+  }
+}
 
 export const createJobSchema = z.object({
   title: z.string().min(1, { message: "Title is required." }),
@@ -26,7 +48,7 @@ export const createJobSchema = z.object({
 
 function PostNewJobPage() {
   const user = useSelector((state: RootState) => state.user.userData);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof createJobSchema>>({
     resolver: zodResolver(createJobSchema),

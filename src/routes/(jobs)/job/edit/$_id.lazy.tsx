@@ -23,21 +23,21 @@ type Params = {
 export const Route = createLazyFileRoute('/(jobs)/job/edit/$_id')({
   // @ts-ignore
   loader: async ({ params: { _id } }: { params: Params; }) => {
+    const user = store.getState().user.userData;
+
+    // user validations
+    if (!user) throw redirect({ to: '/login' });
+
+    if (user.role !== 'client') {
+      toast({
+        title: 'Not Allowed!',
+        description: 'Only Cllients can Post the jobs',
+        variant: 'destructive'
+      });
+      throw redirect({ to: '/notfound' });
+    }
+
     try {
-      const user = store.getState().user.userData;
-      console.log("s  sss ss ", user);
-
-      // user validations
-      if (!user) throw redirect({ to: '/login' });
-
-      if (user.role !== 'client') {
-        toast({
-          title: 'Access denied',
-          description: "Access not allowed, Unauthorize request",
-          variant: 'destructive'
-        });
-        throw redirect({ to: '/notfound' });
-      }
       // job validations
       const res = await getJobsById(_id);
       const job = res.data.data.job;

@@ -4,6 +4,7 @@ import { useState, MouseEvent } from "react";
 import { toggleJobIsSaved } from "@/lib/apiClient";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "../ui/button";
+import { getApiErrMsg } from "@/lib/utils";
 
 type HeartButtonProps = {
     userId: string,
@@ -35,7 +36,7 @@ export function HeartButton({ userId, job, className }: HeartButtonProps) {
             console.error(err);
             toast({
                 title: "Error!",
-                description: err?.data?.message || errMsg,
+                description: getApiErrMsg(err, errMsg),
                 variant: 'destructive'
             });
         }

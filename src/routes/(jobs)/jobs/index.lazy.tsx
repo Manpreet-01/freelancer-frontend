@@ -7,8 +7,15 @@ import { toast } from '@/components/ui/use-toast';
 import { RootState, store } from '@/store/store';
 import { useSelector } from 'react-redux';
 import { Button } from '@/components/ui/button';
+import { getApiErrMsg } from '@/lib/utils';
 
-export async function jobsLoader() {
+export const Route = createLazyFileRoute('/(jobs)/jobs/')({
+    // @ts-ignore
+    loader: jobsLoader,
+    component: JobsPage,
+});
+
+async function jobsLoader() {
     const user = store.getState().user.userData;
     if (!user) {
         throw redirect({
@@ -32,23 +39,16 @@ export async function jobsLoader() {
         console.log(" jobs ;;;;; ", jobs);
         return jobs;
     }
-    catch (error) {
+    catch (err) {
         toast({
             title: "Error",
-            description: 'Failed to load jobs.',
+            description: getApiErrMsg(err, 'Failed to load jobs.'),
             variant: 'destructive'
         });
-        console.error("err in fetching jobs ---> ", error);
+        console.error("err in fetching jobs ---> ", err);
         return [];
     }
 }
-
-
-export const Route = createLazyFileRoute('/(jobs)/jobs/')({
-    component: JobsPage,
-    // @ts-ignore
-    loader: jobsLoader,
-});
 
 function JobsPage() {
     const jobs = Route.useLoaderData({}) as JobItem[];
