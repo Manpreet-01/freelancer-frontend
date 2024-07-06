@@ -22,13 +22,15 @@ export function FreelancerJobActions({ user, job }: FreelancerJobActionsProps) {
 
     return (
         <>
-            <Button
-                size="sm"
-                className="hover:scale-110"
-                onClick={handleGotoApplyJob}
-            >
-                Apply Job
-            </Button>
+            {job.proposal ? <Button>Applied</Button> :
+                <Button
+                    size="sm"
+                    className="hover:scale-110"
+                    onClick={handleGotoApplyJob}
+                >
+                    Apply Job
+                </Button>
+            }
 
             <HeartButton
                 userId={user._id}

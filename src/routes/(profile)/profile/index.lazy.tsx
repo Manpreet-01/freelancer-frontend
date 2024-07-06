@@ -6,8 +6,9 @@ import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
 import { useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from "@/components/ui/use-toast";
+import ViewProfile from '@/components/profile/ViewProfile';
 
-export const Route = createLazyFileRoute('/profile')({
+export const Route = createLazyFileRoute('/(profile)/profile/')({
   component: ProfilePage,
 });
 
@@ -49,20 +50,8 @@ function ProfilePage() {
   if (!user) return null;
 
   return (
-    <div className='mt-16'>
-      <div className='flex justify-between mx-8'>
-        <div className='flex flex-col gap-4 mt-4'>
-          <h1>Name: {user.name}</h1>
-          <p>Username: @{user.username}</p>
-          <p>Email: {user.email}</p>
-          <p>Role: {user.role}</p>
-          <p>Joined on: {new Date(user.createdAt).toLocaleDateString()}</p>
-          <p>Last Updated: {new Date(user.updatedAt).toLocaleDateString()}</p>
-        </div>
-        <div>
-          <img width={300} height={300} src='vite.svg' className='rounded-full border' />
-        </div>
-      </div>
+    <div className='mt-4'>
+      <ViewProfile user={user} />
       <div className='text-center'>
         <Button
           onClick={handleLogout}

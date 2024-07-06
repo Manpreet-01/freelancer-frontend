@@ -51,6 +51,8 @@ apiClient.interceptors.response.use(function (response) {
 
 
 // API functions for different actions
+
+// methods related to user / auth
 export const refreshTokens = () => {
     return apiClient.post("/user/refresh-tokens");
 };
@@ -67,6 +69,7 @@ export const getProfile = () => {
     return apiClient.post("/user/profile");
 };
 
+// methods related to jobs
 export const createJob = (jobData: z.infer<typeof createJobSchema>) => {
     return apiClient.post("/job/create", jobData);
 };
@@ -91,6 +94,11 @@ export const getClientJobs = (id: string) => {
     return apiClient.get(`/job/client/get-all?id=${id}`);
 };
 
-export const toggleJobIsSaved = (data: { userId: string, jobId: string }) => {
+export const toggleJobIsSaved = (data: { userId: string, jobId: string; }) => {
     return apiClient.put(`/job/save/toggle`, data);
+};
+
+// methods related to proposals
+export const sumitProposal = (data: { jobId: string, coverLetter: string, }) => {
+    return apiClient.post('/proposal/create', data);
 };

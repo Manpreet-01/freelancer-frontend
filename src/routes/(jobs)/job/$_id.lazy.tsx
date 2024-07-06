@@ -1,5 +1,5 @@
 import JobPage from '@/components/job/JobPage';
-import { deleteJob, getJobsById } from '@/lib/apiClient';
+import { deleteJob, getJobsById, sumitProposal } from '@/lib/apiClient';
 import type { JobItem } from '@/types/job.types';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { toast } from '@/components/ui/use-toast';
@@ -60,16 +60,17 @@ export type deleteJobPayload = {
 };
 
 function JobPageLayout() {
-  const user = useSelector((state: RootState) => state.user.userData);
-  const job = Route.useLoaderData<JobItem | null>();
+  const user = useSelector((state: RootState) => state.user.userData!);
+
+  const job = Route.useLoaderData<JobItem>();
   const { applying: isApplying } = Route.useSearch<{ applying: boolean; }>();
 
   const navigate = useNavigate();
 
   async function handleDeleteJob() {
     const payload: deleteJobPayload = {
-      jobId: job?._id || "",
-      userId: user?._id || ""
+      jobId: job._id || "",
+      userId: user._id || ""
     };
 
     try {
@@ -95,12 +96,35 @@ function JobPageLayout() {
     }
   }
 
-  const handleCancelProposal = () => navigate({ to: `/job/${job?._id}` });
-  const handleGoToEditJob = () => navigate({ to: `/job/edit/${job?._id}` });
+  const handleCancelProposal = () => navigate({ to: `/job/${job._id}` });
+  const handleGoToEditJob = () => navigate({ to: `/job/edit/${job._id}` });
 
   // TODO: write logic for submit / crete proposal here...
-  async function handleSubmitProposal(jobId) {
-    console.log("submitted for JobId : ", jobId);
+  async function handleSubmitProposal(coverLetter: string) {
+    try {
+      const res = await sumitProposal({ jobId: job._id, coverLetter });
+      const data = res.data.data;
+      console.log("proposal submitted :  ", data);
+      toast({
+        title: "Success!",
+        description: res.data.message || "Proposal submitted successfully",
+        variant: 'success'
+      });
+    } catch (err: any) {
+      console.error("error in submitting proposal ::  ", getApiErrMsg(err, 'failed to submit proposal'));
+      toast({
+        title: 'Failed to Submit Proposal',
+        description: getApiErrMsg(err, 'Failed to submit proposal'),
+        variant: 'destructive'
+      });
+    }
+  }
+
+  async function handleEditProposal(){
+    console.log("edited")
+  }
+  async function handleWidhrawProposal(){
+    console.log("widhrawed")
   }
 
   if (!job) return null;
@@ -114,6 +138,8 @@ function JobPageLayout() {
         onEdit={handleGoToEditJob}
         onCancelProposal={handleCancelProposal}
         onSubmitProposal={handleSubmitProposal}
+        onEditProposal={handleEditProposal}
+        onWithdrawProposal={handleWidhrawProposal}
       />
     </>
   );

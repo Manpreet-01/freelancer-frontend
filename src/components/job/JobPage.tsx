@@ -5,22 +5,24 @@ import { DollarSign, Tags, Timer, TimerReset, Wallet } from "lucide-react";
 import type { JobItem } from "@/types/job.types";
 import { userData } from "@/types/user.types";
 import { ClientJobActions, FreelancerJobActions } from "./JobActions";
-import { Textarea } from '@/components/ui/textarea';
-import { useState } from "react";
-import { Button } from "../ui/button";
+import { CreateProposal } from "../proposal/CreateProposal";
+import { ViewProposal } from "../proposal/ViewProposal";
+import { ProposalsList } from "../proposal/ProposalsList";
 
-type JobPageProps = {
+export type JobPageProps = {
     job: JobItem,
     user: userData | null,
     onDelete: any,
     onEdit: any;
     isApplying: boolean,
     onCancelProposal: () => void,
-    onSubmitProposal: (jobId: string) => void,
+    onSubmitProposal: (coverLetter: string) => void,
+    onEditProposal: () => void,
+    onWithdrawProposal: () => void,
 };
 
 export default function JobPage({ job, user, onDelete, onEdit, isApplying,
-    onCancelProposal, onSubmitProposal }: JobPageProps) {
+    onCancelProposal, onSubmitProposal, onEditProposal, onWithdrawProposal }: JobPageProps) {
 
     return (
         <>
@@ -78,60 +80,25 @@ export default function JobPage({ job, user, onDelete, onEdit, isApplying,
                 </CardFooter>
             </Card>
 
-            {isApplying &&
+            {user?.role === 'freelancer' && isApplying && !job.proposal &&
                 <CreateProposal
-                    jobId={job._id}
                     onCancel={onCancelProposal}
                     onSubmit={onSubmitProposal}
                 />
             }
+
+            {user?.role === 'freelancer' && job.proposal &&
+                <ViewProposal
+                    proposal={job.proposal}
+                    onEdit={onEditProposal}
+                    onWithdraw={onWithdrawProposal}
+                    role={user.role}
+                />
+            }
+
+            {user?.role === 'client' && (
+                <ProposalsList job={job} user={user} />
+            )}
         </>
     );
 };
-
-
-type CreateProposalProps = {
-    jobId: string,
-    onCancel: JobPageProps["onCancelProposal"],
-    onSubmit: JobPageProps["onSubmitProposal"],
-};
-
-function CreateProposal({ jobId, onCancel, onSubmit }: CreateProposalProps) {
-    const [coverLetter, setCoverLetter] = useState('');
-
-    function handleSubmit() {
-        onSubmit(jobId);
-    }
-
-    return (
-        <>
-            <Card className='m-4 p-2'>
-                <CardHeader>
-                    <CardTitle>Cover Letter</CardTitle>
-                    <CardDescription>Write your proposal to apply for this job</CardDescription>
-                </CardHeader>
-
-                <CardDescription className="p-4">
-                    <Textarea rows={10} value={coverLetter} onChange={e => setCoverLetter(e.target.value)} />
-                </CardDescription>
-
-                <CardFooter className="flex justify-end gap-x-4 py-4 w-full">
-                    <Button
-                        size="sm"
-                        className="hover:scale-110"
-                        onClick={handleSubmit}
-                    >Submit Proposal</Button>
-
-                    <Button
-                        variant="destructive"
-                        size="sm"
-                        className="hover:scale-110"
-                        onClick={onCancel}
-                    >
-                        Cancel
-                    </Button>
-                </CardFooter>
-            </Card>
-        </>
-    );
-}
