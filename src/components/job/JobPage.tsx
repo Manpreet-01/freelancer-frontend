@@ -81,14 +81,14 @@ export default function JobPage({ job, user, onDelete, onEdit, isApplying, isEdi
                 </CardFooter>
             </Card>
 
-            {user?.role === 'freelancer' && !job.proposal && isApplying &&
+            {user?.role === 'freelancer' && !job.isApplied && isApplying &&
                 <CreateOrUpdateProposal
                     onCancel={onCancelProposal}
                     onSubmit={onSubmitProposal}
                 />
             }
 
-            {user?.role === 'freelancer' && job.proposal && isEditingPropoal && (
+            {user?.role === 'freelancer' && job.isApplied && isEditingPropoal  && (
                 <CreateOrUpdateProposal
                     oldCoverLetter={job.proposal.coverLetter}
                     onCancel={onCancelProposal}
@@ -96,7 +96,7 @@ export default function JobPage({ job, user, onDelete, onEdit, isApplying, isEdi
                 />
             )}
 
-            {user?.role === 'freelancer' && job.proposal && !isEditingPropoal &&
+            {user?.role === 'freelancer' && job.isApplied && !isEditingPropoal &&
                 <ViewProposal
                     proposal={job.proposal}
                     onEdit={onEditProposal}

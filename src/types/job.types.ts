@@ -12,7 +12,7 @@ export type Proposal = {
     __v: number;
 }
 
-export type JobItem = {
+export type JobItemBase = {
     _id: string;
     title: string;
     description: string;
@@ -22,7 +22,18 @@ export type JobItem = {
     createdAt: string;
     updatedAt: string;
     isSaved: Boolean;
-    proposal?: Proposal
     proposals?: Proposal[]
     __v: number;
 };
+
+type JobItemApplied = JobItemBase & {
+    isApplied: true;
+    proposal: Proposal;
+};
+
+type JobItemNotApplied = JobItemBase & {
+    isApplied: false;
+    proposal?: undefined;
+};
+
+export type JobItem = JobItemApplied | JobItemNotApplied;

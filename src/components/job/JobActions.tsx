@@ -22,10 +22,13 @@ export function FreelancerJobActions({ user, job }: FreelancerJobActionsProps) {
 
     return (
         <>
-            {job.proposal ? (
-                <Button key='disabled'
-                    style={{ cursor: 'not-allowed' }}
+            {job.isApplied ? (
+                <Button
+                    key='disabled'
                     disabled={true}
+                    variant="ghost"
+                    className='text-green-500 hover:text-green-500 hover:bg-card font-bold'
+                    style={{ pointerEvents: "all" }}
                 >
                     Applied
                 </Button>
