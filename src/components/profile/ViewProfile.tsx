@@ -1,5 +1,7 @@
 import { userData } from "@/types/user.types";
 
+import profilePicPlaceHolder from '@/assets/vite.svg';
+
 type ViewProfileProps = {
     user: userData;
 };
@@ -18,7 +20,7 @@ export default function ViewProfile({ user }: ViewProfileProps) {
                     <p>Last Updated: {new Date(user.updatedAt).toLocaleDateString()}</p>
                 </div>
                 <div>
-                    <img width={300} height={300} src={user.imgUrl || 'vite.svg'} className='rounded-full border' />
+                    <img width={300} height={300} src={user.imgUrl || profilePicPlaceHolder} className='rounded-full border' />
                 </div>
             </div>
 

@@ -22,12 +22,10 @@ const NotfoundLazyImport = createFileRoute('/notfound')()
 const LoginLazyImport = createFileRoute('/login')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
+const ProfileIndexLazyImport = createFileRoute('/profile/')()
+const ProfileUsernameLazyImport = createFileRoute('/profile/$username')()
 const searchSearchLazyImport = createFileRoute('/(search)/search')()
-const profileProfileIndexLazyImport = createFileRoute('/(profile)/profile/')()
 const jobsJobsIndexLazyImport = createFileRoute('/(jobs)/jobs/')()
-const profileProfileUsernameLazyImport = createFileRoute(
-  '/(profile)/profile/$username',
-)()
 const jobsJobidLazyImport = createFileRoute('/(jobs)/job/$_id')()
 const jobsJobPostIndexLazyImport = createFileRoute('/(jobs)/job/post/')()
 const jobsJobEditidLazyImport = createFileRoute('/(jobs)/job/edit/$_id')()
@@ -64,6 +62,18 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
+const ProfileIndexLazyRoute = ProfileIndexLazyImport.update({
+  path: '/profile/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/profile/index.lazy').then((d) => d.Route))
+
+const ProfileUsernameLazyRoute = ProfileUsernameLazyImport.update({
+  path: '/profile/$username',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/profile/$username.lazy').then((d) => d.Route),
+)
+
 const searchSearchLazyRoute = searchSearchLazyImport
   .update({
     path: '/search',
@@ -71,30 +81,12 @@ const searchSearchLazyRoute = searchSearchLazyImport
   } as any)
   .lazy(() => import('./routes/(search)/search.lazy').then((d) => d.Route))
 
-const profileProfileIndexLazyRoute = profileProfileIndexLazyImport
-  .update({
-    path: '/profile/',
-    getParentRoute: () => rootRoute,
-  } as any)
-  .lazy(() =>
-    import('./routes/(profile)/profile/index.lazy').then((d) => d.Route),
-  )
-
 const jobsJobsIndexLazyRoute = jobsJobsIndexLazyImport
   .update({
     path: '/jobs/',
     getParentRoute: () => rootRoute,
   } as any)
   .lazy(() => import('./routes/(jobs)/jobs/index.lazy').then((d) => d.Route))
-
-const profileProfileUsernameLazyRoute = profileProfileUsernameLazyImport
-  .update({
-    path: '/profile/$username',
-    getParentRoute: () => rootRoute,
-  } as any)
-  .lazy(() =>
-    import('./routes/(profile)/profile/$username.lazy').then((d) => d.Route),
-  )
 
 const jobsJobidLazyRoute = jobsJobidLazyImport
   .update({
@@ -172,6 +164,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof searchSearchLazyImport
       parentRoute: typeof rootRoute
     }
+    '/profile/$username': {
+      id: '/profile/$username'
+      path: '/profile/$username'
+      fullPath: '/profile/$username'
+      preLoaderRoute: typeof ProfileUsernameLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/profile/': {
+      id: '/profile/'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/(jobs)/job/$_id': {
       id: '/job/$_id'
       path: '/job/$_id'
@@ -179,25 +185,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof jobsJobidLazyImport
       parentRoute: typeof rootRoute
     }
-    '/(profile)/profile/$username': {
-      id: '/profile/$username'
-      path: '/profile/$username'
-      fullPath: '/profile/$username'
-      preLoaderRoute: typeof profileProfileUsernameLazyImport
-      parentRoute: typeof rootRoute
-    }
     '/(jobs)/jobs/': {
       id: '/jobs/'
       path: '/jobs'
       fullPath: '/jobs'
       preLoaderRoute: typeof jobsJobsIndexLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/(profile)/profile/': {
-      id: '/profile/'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof profileProfileIndexLazyImport
       parentRoute: typeof rootRoute
     }
     '/(jobs)/job/edit/$_id': {
@@ -227,10 +219,10 @@ export const routeTree = rootRoute.addChildren({
   RegisterLazyRoute,
   SearchJobsLazyRoute,
   searchSearchLazyRoute,
+  ProfileUsernameLazyRoute,
+  ProfileIndexLazyRoute,
   jobsJobidLazyRoute,
-  profileProfileUsernameLazyRoute,
   jobsJobsIndexLazyRoute,
-  profileProfileIndexLazyRoute,
   jobsJobEditidLazyRoute,
   jobsJobPostIndexLazyRoute,
 })
@@ -250,10 +242,10 @@ export const routeTree = rootRoute.addChildren({
         "/register",
         "/search-jobs",
         "/search",
-        "/job/$_id",
         "/profile/$username",
-        "/jobs/",
         "/profile/",
+        "/job/$_id",
+        "/jobs/",
         "/job/edit/$_id",
         "/job/post/"
       ]
@@ -279,17 +271,17 @@ export const routeTree = rootRoute.addChildren({
     "/search": {
       "filePath": "(search)/search.lazy.tsx"
     },
+    "/profile/$username": {
+      "filePath": "profile/$username.lazy.tsx"
+    },
+    "/profile/": {
+      "filePath": "profile/index.lazy.tsx"
+    },
     "/job/$_id": {
       "filePath": "(jobs)/job/$_id.lazy.tsx"
     },
-    "/profile/$username": {
-      "filePath": "(profile)/profile/$username.lazy.tsx"
-    },
     "/jobs/": {
       "filePath": "(jobs)/jobs/index.lazy.tsx"
-    },
-    "/profile/": {
-      "filePath": "(profile)/profile/index.lazy.tsx"
     },
     "/job/edit/$_id": {
       "filePath": "(jobs)/job/edit/$_id.lazy.tsx"

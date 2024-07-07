@@ -1,20 +1,33 @@
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { Textarea } from '@/components/ui/textarea';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 
 import type { JobPageProps } from "../job/JobPage";
+import { MessageSquareWarningIcon } from "lucide-react";
 
-type CreateProposalProps = {
+type CreateOrUpdateProposalProps = {
+    oldCoverLetter?: string,
     onCancel: JobPageProps["onCancelProposal"],
     onSubmit: JobPageProps["onSubmitProposal"],
 };
 
-export function CreateProposal({ onCancel, onSubmit }: CreateProposalProps) {
-    const [coverLetter, setCoverLetter] = useState('');
+export function CreateOrUpdateProposal({ onCancel, onSubmit, oldCoverLetter }: CreateOrUpdateProposalProps) {
+    const [coverLetter, setCoverLetter] = useState(oldCoverLetter || '');
+    const [errMsg, setErrMsg] = useState("");
+    const [isIntracted, setIsIntracted] = useState(false);
+
+    useEffect(() => {
+        if (coverLetter) setErrMsg("");
+        if (!coverLetter && !errMsg && isIntracted) setErrMsg("Cover Letter is required.");
+        if (!isIntracted && coverLetter) setIsIntracted(true);
+    }, [coverLetter.length]);
+
 
     function handleSubmit() {
-        onSubmit(coverLetter);
+        if (coverLetter.trim()) return onSubmit(coverLetter);
+        setIsIntracted(true);
+        setErrMsg("Cover Letter is required.");
     }
 
     return (
@@ -27,6 +40,11 @@ export function CreateProposal({ onCancel, onSubmit }: CreateProposalProps) {
 
                 <CardDescription className="p-4">
                     <Textarea rows={10} value={coverLetter} onChange={e => setCoverLetter(e.target.value)} />
+                    <span className={`flex items-center gap-x-2  pt-4 ${errMsg ? 'visible' : 'invisible'}`}>
+                        <MessageSquareWarningIcon className="text-red-500" />
+                        <span className='text-xl text-red-500'>{errMsg || "Error placeholder"}</span>
+                    </span>
+
                 </CardDescription>
 
                 <CardFooter className="flex justify-end gap-x-4 py-4 w-full">

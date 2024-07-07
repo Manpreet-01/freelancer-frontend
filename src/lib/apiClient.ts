@@ -69,6 +69,10 @@ export const getProfile = () => {
     return apiClient.post("/user/profile");
 };
 
+export const getPublicProfile = (username: string) => {
+    return apiClient.post(`/user/profile/${username}`);
+};
+
 // methods related to jobs
 export const createJob = (jobData: z.infer<typeof createJobSchema>) => {
     return apiClient.post("/job/create", jobData);
@@ -99,6 +103,15 @@ export const toggleJobIsSaved = (data: { userId: string, jobId: string; }) => {
 };
 
 // methods related to proposals
-export const sumitProposal = (data: { jobId: string, coverLetter: string, }) => {
+export const submitProposal = (data: { jobId: string, coverLetter: string, }) => {
     return apiClient.post('/proposal/create', data);
+};
+
+export const updateProposal = (data: { jobId: string, coverLetter: string; }) => {
+    return apiClient.post('/proposal/update', data);
+};
+
+// TODO: change delete logic to widhraw proposal
+export const withdrawProposal = (data: { jobId: string; }) => {
+    return apiClient.delete('/proposal/delete', { data });
 };

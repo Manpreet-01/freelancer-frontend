@@ -1,11 +1,12 @@
 import JobPage from '@/components/job/JobPage';
-import { deleteJob, getJobsById, sumitProposal } from '@/lib/apiClient';
+import { deleteJob, getJobsById, submitProposal, updateProposal, withdrawProposal } from '@/lib/apiClient';
 import type { JobItem } from '@/types/job.types';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { toast } from '@/components/ui/use-toast';
 import { useSelector } from 'react-redux';
 import { RootState, store } from '@/store/store';
 import { getApiErrMsg } from '@/lib/utils';
+import { useEffect } from 'react';
 
 
 export const Route = createLazyFileRoute('/(jobs)/job/$_id')({
@@ -59,13 +60,23 @@ export type deleteJobPayload = {
   jobId: string,
 };
 
+type SearchParamsType = {
+  applying: boolean,
+  editingProposal: boolean;
+};
+
 function JobPageLayout() {
   const user = useSelector((state: RootState) => state.user.userData!);
 
   const job = Route.useLoaderData<JobItem>();
-  const { applying: isApplying } = Route.useSearch<{ applying: boolean; }>();
+  const { applying: isApplying, editingProposal: isEditingPropoal } = Route.useSearch<SearchParamsType>();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isApplying && isEditingPropoal) navigate({ to: '/notfound' });
+    console.log('validating urls params');
+  }, [!!isApplying, !!isEditingPropoal]);
 
   async function handleDeleteJob() {
     const payload: deleteJobPayload = {
@@ -102,7 +113,18 @@ function JobPageLayout() {
   // TODO: write logic for submit / crete proposal here...
   async function handleSubmitProposal(coverLetter: string) {
     try {
-      const res = await sumitProposal({ jobId: job._id, coverLetter });
+      const payload = { jobId: job._id, coverLetter };
+      let res = null;
+
+      if (isEditingPropoal) res = await updateProposal(payload);
+      else if (isApplying) res = await submitProposal(payload);
+
+      if (!res) {
+        alert("wrong params provided");
+        navigate({ to: '/notfound' });
+        return;
+      }
+
       const data = res.data.data;
       console.log("proposal submitted :  ", data);
       toast({
@@ -110,6 +132,7 @@ function JobPageLayout() {
         description: res.data.message || "Proposal submitted successfully",
         variant: 'success'
       });
+      navigate({ to: `/job/${job._id}` });
     } catch (err: any) {
       console.error("error in submitting proposal ::  ", getApiErrMsg(err, 'failed to submit proposal'));
       toast({
@@ -120,11 +143,27 @@ function JobPageLayout() {
     }
   }
 
-  async function handleEditProposal(){
-    console.log("edited")
-  }
-  async function handleWidhrawProposal(){
-    console.log("widhrawed")
+  const handleEditProposal = () => navigate({ search: () => ({ editingProposal: true }) });
+
+  async function handleWidhrawProposal() {
+    try {
+      const res = await withdrawProposal({ jobId: job._id });
+      toast({
+        title: "Success!",
+        description: res.data.message || "Job propsoal drawn successfully",
+        variant: 'success'
+      });
+    } catch (err: any) {
+      console.error("err in withraw proposal", err);
+      toast({
+        title: 'Oops! An Error Occured',
+        description: getApiErrMsg(err, "Unable to withraw Job Proposal"),
+        variant: 'destructive'
+      });
+    }
+    finally {
+      navigate({ search: '' }); // logic for update the status & ui
+    }
   }
 
   if (!job) return null;
@@ -134,6 +173,7 @@ function JobPageLayout() {
         job={job}
         user={user}
         isApplying={isApplying}
+        isEditingPropoal={isEditingPropoal}
         onDelete={handleDeleteJob}
         onEdit={handleGoToEditJob}
         onCancelProposal={handleCancelProposal}

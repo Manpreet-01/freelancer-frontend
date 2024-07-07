@@ -8,11 +8,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from "@/components/ui/use-toast";
 import ViewProfile from '@/components/profile/ViewProfile';
 
-export const Route = createLazyFileRoute('/(profile)/profile/')({
+export const Route = createLazyFileRoute('/profile/')({
   component: ProfilePage,
 });
 
-
+// for logged-in user profile
 function ProfilePage() {
   const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
   const user = useSelector((state: RootState) => state.user.userData);

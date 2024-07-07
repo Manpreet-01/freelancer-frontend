@@ -5,7 +5,7 @@ import { DollarSign, Tags, Timer, TimerReset, Wallet } from "lucide-react";
 import type { JobItem } from "@/types/job.types";
 import { userData } from "@/types/user.types";
 import { ClientJobActions, FreelancerJobActions } from "./JobActions";
-import { CreateProposal } from "../proposal/CreateProposal";
+import { CreateOrUpdateProposal } from "../proposal/CreateOrUpdateProposal";
 import { ViewProposal } from "../proposal/ViewProposal";
 import { ProposalsList } from "../proposal/ProposalsList";
 
@@ -15,13 +15,14 @@ export type JobPageProps = {
     onDelete: any,
     onEdit: any;
     isApplying: boolean,
+    isEditingPropoal: boolean,
     onCancelProposal: () => void,
     onSubmitProposal: (coverLetter: string) => void,
     onEditProposal: () => void,
     onWithdrawProposal: () => void,
 };
 
-export default function JobPage({ job, user, onDelete, onEdit, isApplying,
+export default function JobPage({ job, user, onDelete, onEdit, isApplying, isEditingPropoal,
     onCancelProposal, onSubmitProposal, onEditProposal, onWithdrawProposal }: JobPageProps) {
 
     return (
@@ -80,14 +81,22 @@ export default function JobPage({ job, user, onDelete, onEdit, isApplying,
                 </CardFooter>
             </Card>
 
-            {user?.role === 'freelancer' && isApplying && !job.proposal &&
-                <CreateProposal
+            {user?.role === 'freelancer' && !job.proposal && isApplying &&
+                <CreateOrUpdateProposal
                     onCancel={onCancelProposal}
                     onSubmit={onSubmitProposal}
                 />
             }
 
-            {user?.role === 'freelancer' && job.proposal &&
+            {user?.role === 'freelancer' && job.proposal && isEditingPropoal && (
+                <CreateOrUpdateProposal
+                    oldCoverLetter={job.proposal.coverLetter}
+                    onCancel={onCancelProposal}
+                    onSubmit={onSubmitProposal}
+                />
+            )}
+
+            {user?.role === 'freelancer' && job.proposal && !isEditingPropoal &&
                 <ViewProposal
                     proposal={job.proposal}
                     onEdit={onEditProposal}
