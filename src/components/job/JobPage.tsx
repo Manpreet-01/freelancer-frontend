@@ -13,17 +13,21 @@ export type JobPageProps = {
     job: JobItem,
     user: userData | null,
     onDelete: any,
-    onEdit: any;
+    onEdit: any,
     isApplying: boolean,
     isEditingPropoal: boolean,
-    onCancelProposal: () => void,
+    onCancelProposal: any,
     onSubmitProposal: (coverLetter: string) => void,
-    onEditProposal: () => void,
-    onWithdrawProposal: () => void,
+    onEditProposal: any,
+    onWithdrawProposal: any,
+    setProposalStatus: any,
 };
 
-export default function JobPage({ job, user, onDelete, onEdit, isApplying, isEditingPropoal,
-    onCancelProposal, onSubmitProposal, onEditProposal, onWithdrawProposal }: JobPageProps) {
+export default function JobPage({
+    job, user, onDelete, onEdit, isApplying, isEditingPropoal,
+    onCancelProposal, onSubmitProposal, onEditProposal, onWithdrawProposal,
+    setProposalStatus
+}: JobPageProps) {
 
     return (
         <>
@@ -88,7 +92,7 @@ export default function JobPage({ job, user, onDelete, onEdit, isApplying, isEdi
                 />
             }
 
-            {user?.role === 'freelancer' && job.isApplied && isEditingPropoal  && (
+            {user?.role === 'freelancer' && job.isApplied && isEditingPropoal && (
                 <CreateOrUpdateProposal
                     oldCoverLetter={job.proposal.coverLetter}
                     onCancel={onCancelProposal}
@@ -106,7 +110,11 @@ export default function JobPage({ job, user, onDelete, onEdit, isApplying, isEdi
             }
 
             {user?.role === 'client' && (
-                <ProposalsList job={job} user={user} />
+                <ProposalsList
+                    job={job}
+                    user={user}
+                    setProposalStatus={setProposalStatus}
+                />
             )}
         </>
     );

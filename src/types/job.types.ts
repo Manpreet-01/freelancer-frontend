@@ -4,13 +4,14 @@ export type Proposal = {
     user?: {
         name: string,
         username: string,
-        _id: string
+        _id: string;
     },
     coverLetter: string;
     createdAt: string;
     updatedAt: string;
+    status?: 'unread' | 'pending' | 'accepted' | 'rejected';
     __v: number;
-}
+};
 
 export type JobItemBase = {
     _id: string;
@@ -22,7 +23,7 @@ export type JobItemBase = {
     createdAt: string;
     updatedAt: string;
     isSaved: Boolean;
-    proposals?: Proposal[]
+    proposals?: Proposal[];
     __v: number;
 };
 

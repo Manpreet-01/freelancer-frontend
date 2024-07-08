@@ -103,6 +103,7 @@ export const toggleJobIsSaved = (data: { userId: string, jobId: string; }) => {
 };
 
 // methods related to proposals
+// proposal methods for freelancers
 export const submitProposal = (data: { jobId: string, coverLetter: string, }) => {
     return apiClient.post('/proposal/create', data);
 };
@@ -114,4 +115,14 @@ export const updateProposal = (data: { jobId: string, coverLetter: string; }) =>
 // TODO: change delete logic to widhraw proposal
 export const withdrawProposal = (data: { jobId: string; }) => {
     return apiClient.delete('/proposal/delete', { data });
+};
+
+// proposal methods for clients
+export type AcceptOrRejectProposal = {
+    proposalId: string,
+    status: "accepted" | "rejected",
+};
+
+export const acceptOrRejectProposal = ({ proposalId, status }: AcceptOrRejectProposal) => {
+    return apiClient.put(`/proposal/toggle-status/${proposalId}/?proposalStatus=${status}`);
 };

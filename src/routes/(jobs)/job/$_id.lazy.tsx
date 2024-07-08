@@ -1,5 +1,5 @@
 import JobPage from '@/components/job/JobPage';
-import { deleteJob, getJobsById, submitProposal, updateProposal, withdrawProposal } from '@/lib/apiClient';
+import { AcceptOrRejectProposal, acceptOrRejectProposal, deleteJob, getJobsById, submitProposal, updateProposal, withdrawProposal } from '@/lib/apiClient';
 import type { JobItem } from '@/types/job.types';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { toast } from '@/components/ui/use-toast';
@@ -14,6 +14,7 @@ export const Route = createLazyFileRoute('/(jobs)/job/$_id')({
   loader: jobPageLoader,
   component: JobPageLayout,
 });
+
 
 
 type Params = {
@@ -110,7 +111,6 @@ function JobPageLayout() {
   const handleCancelProposal = () => navigate({ to: `/job/${job._id}` });
   const handleGoToEditJob = () => navigate({ to: `/job/edit/${job._id}` });
 
-  // TODO: write logic for submit / crete proposal here...
   async function handleSubmitProposal(coverLetter: string) {
     try {
       const payload = { jobId: job._id, coverLetter };
@@ -166,6 +166,26 @@ function JobPageLayout() {
     }
   }
 
+  async function setProposalStatus({ proposalId, status }: AcceptOrRejectProposal) {
+    try {
+      await acceptOrRejectProposal({ proposalId, status });
+      toast({
+        title: "Success!",
+        description: `Proposal ${status} successfully`,
+        variant: 'success'
+      });
+    } catch (error) {
+      toast({
+        title: 'Oops! An Error Occured',
+        description: getApiErrMsg(error, `Unable to ${status} proposal`),
+        variant: 'destructive'
+      });
+    }
+    finally {
+      navigate({ search: '' }); // logic for update the status & ui
+    }
+  }
+
   if (!job) return null;
   return (
     <>
@@ -180,6 +200,7 @@ function JobPageLayout() {
         onSubmitProposal={handleSubmitProposal}
         onEditProposal={handleEditProposal}
         onWithdrawProposal={handleWidhrawProposal}
+        setProposalStatus={setProposalStatus}
       />
     </>
   );

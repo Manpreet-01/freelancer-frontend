@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
-import { LinkIcon, TimerReset, User } from "lucide-react";
+import { LinkIcon, TimerReset, Undo, User } from "lucide-react";
 import { timeSince } from "@/lib/timeFormatter";
 import { Link } from '@tanstack/react-router';
 
@@ -12,10 +12,11 @@ type ViewProposalProps = {
     proposal: Proposal,
     onEdit?: JobPageProps["onEditProposal"],
     onWithdraw?: JobPageProps["onWithdrawProposal"],
+    setStatus?: JobPageProps["setProposalStatus"],
     role: string,
 };
 
-export function ViewProposal({ proposal, onEdit, onWithdraw, role }: ViewProposalProps) {
+export function ViewProposal({ proposal, onEdit, onWithdraw, setStatus, role }: ViewProposalProps) {
     return (
         <>
             <Card className='m-4 p-2'>
@@ -77,8 +78,46 @@ export function ViewProposal({ proposal, onEdit, onWithdraw, role }: ViewProposa
                             </Button>
                         </>
                     )}
+                    {role === 'client' && (
+                        <>
+                            {proposal.status === 'accepted' &&
+                                <Button variant="ghost" className="text-green-500 font-bold" disabled>Accepted</Button>
+                            }
+
+                            {proposal.status === 'rejected' &&
+                                <Button variant="ghost" className="text-red-500 font-bold" disabled>
+                                    Rejected
+                                </Button>
+                            }
+
+                            {proposal.status !== 'accepted' && proposal.status !== 'rejected' ? (
+                                <>
+                                    <Button
+                                        className="hover:scale-105 bg-green-600 hover:bg-green-500 text-gray-50"
+                                        onClick={() => setStatus({ proposalId: proposal._id, status: 'accepted' })}
+                                    >
+                                        Accept
+                                    </Button>
+                                    <Button
+                                        className="hover:scale-105 bg-red-600 hover:bg-red-500 text-white"
+                                        onClick={() => setStatus({ proposalId: proposal._id, status: 'rejected' })}
+                                    >
+                                        Reject
+                                    </Button>
+                                </>
+                            ) : (
+                                <Button
+                                    title={`reset ${proposal.status}`}
+                                    variant="ghost"
+                                    onClick={() => setStatus({ proposalId: proposal._id, status: 'reset' })}
+                                >
+                                    <Undo />
+                                </Button>
+                            )}
+                        </>
+                    )}
                 </CardFooter>
-            </Card>
+            </Card >
         </>
     );
 }
