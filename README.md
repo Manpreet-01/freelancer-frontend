@@ -1,4 +1,4 @@
-freelancing portfolio project:
+### freelancing portfolio project stack:
 - shadcn with vite-react-Ts 
 - shadcn with zod
 - shadcn with react-hook-form 

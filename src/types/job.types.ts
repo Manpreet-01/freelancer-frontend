@@ -1,7 +1,7 @@
 export type Proposal = {
     _id: string;
     job: string;
-    user?: {
+    user?: {                // sometimer there is no need to display user's Info into UI, so it can be absent
         name: string,
         username: string,
         _id: string;
@@ -9,6 +9,7 @@ export type Proposal = {
     coverLetter: string;
     createdAt: string;
     updatedAt: string;
+    isWithdrawn: boolean;
     status?: 'unread' | 'pending' | 'accepted' | 'rejected';
     __v: number;
 };
@@ -28,13 +29,15 @@ export type JobItemBase = {
 };
 
 type JobItemApplied = JobItemBase & {
-    isApplied: true;
+    isApplied: true;                // showing status on jobs list page based on these booleans
+    isWithdrawn?: true;
     proposal: Proposal;
 };
 
 type JobItemNotApplied = JobItemBase & {
-    isApplied: false;
-    proposal?: undefined;
+    isApplied: undefined;
+    isWithdrawn: undefined;
+    proposal: undefined;
 };
 
 export type JobItem = JobItemApplied | JobItemNotApplied;

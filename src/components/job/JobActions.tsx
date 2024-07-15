@@ -11,6 +11,7 @@ type FreelancerJobActionsProps = {
     job: JobItem,
 };
 
+
 export function FreelancerJobActions({ user, job }: FreelancerJobActionsProps) {
     const navigate = useNavigate();
 
@@ -22,7 +23,18 @@ export function FreelancerJobActions({ user, job }: FreelancerJobActionsProps) {
 
     return (
         <>
-            {job.isApplied ? (
+            {!job.isApplied &&
+                <Button
+                    key='active'
+                    size="sm"
+                    className="hover:scale-110"
+                    onClick={handleGotoApplyJob}
+                >
+                    Apply Job
+                </Button>
+            }
+
+            {job.isApplied && !job.isWithdrawn &&
                 <Button
                     key='disabled'
                     disabled={true}
@@ -32,16 +44,45 @@ export function FreelancerJobActions({ user, job }: FreelancerJobActionsProps) {
                 >
                     Applied
                 </Button>
-            ) : (
+            }
+
+            {job.isWithdrawn &&
                 <Button
-                    key='active'
-                    size="sm"
-                    className="hover:scale-110"
-                    onClick={handleGotoApplyJob}
+                    key='disabled'
+                    disabled={true}
+                    variant="ghost"
+                    className='text-yellow-500 hover:text-yellow-500 hover:bg-card font-bold'
+                    style={{ pointerEvents: "all" }}
                 >
-                    Apply Job
+                    Withdrawn
                 </Button>
-            )}
+            }
+
+            {job.proposal?.status === 'accepted' && !job.isWithdrawn &&
+                <Button
+                    key='accepted'
+                    disabled={true}
+                    variant="ghost"
+                    title='Your proposal accepted by client'
+                    className='text-green-500 hover:text-green-500 hover:bg-card font-bold'
+                    style={{ pointerEvents: "all" }}
+                >
+                    Accepted
+                </Button>
+            }
+
+            {job.proposal?.status === 'rejected' && !job.isWithdrawn &&
+                <Button
+                    key='rejected'
+                    disabled={true}
+                    variant="ghost"
+                    title='Your proposal rejected by client'
+                    className='text-red-500 hover:text-red-500 hover:bg-card font-bold'
+                    style={{ pointerEvents: "all" }}
+                >
+                    Rejected
+                </Button>
+            }
 
             <HeartButton
                 userId={user._id}

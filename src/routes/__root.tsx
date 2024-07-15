@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { RootState, store } from '@/store/store';
 import { getProfile } from '@/lib/apiClient';
 import { logOutUser, setLoggedInUser } from '@/features/user/userSlice';
+import { NotFound } from './notfound.lazy';
 
 // import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 
@@ -24,6 +25,7 @@ async function handleVerifyLogin() {
 export const Route = createRootRoute({
     component: RootLayout,
     beforeLoad: handleVerifyLogin,
+    errorComponent: NotFound,
 });
 
 

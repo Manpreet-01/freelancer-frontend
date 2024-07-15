@@ -16,6 +16,11 @@ export function ProposalsList({ job, user, setProposalStatus }: ProposalsList) {
         <>
             <Card className="m-4">
                 <h1 className="text-3xl m-8">All Proposals</h1>
+                {job.proposals?.length == 0 &&
+                    <p className="p-4 mx-4 text-lg">
+                        No Proposals here.
+                    </p>
+                }
                 {job.proposals?.map(proposal => (
                     <ViewProposal
                         key={proposal._id}
