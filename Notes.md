@@ -9,5 +9,5 @@ Client:
 Freelancer:
    - submit proposal on a job
    - edit proposal
-   - withraw proposal
-   - `DONT delete propsoal instead add a boolean property in document to determine the withraw status`
+   - withdraw proposal
+   - `DONT delete propsoal instead add a boolean property in document to determine the withdraw status`

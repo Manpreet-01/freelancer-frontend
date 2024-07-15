@@ -145,7 +145,7 @@ function JobPageLayout() {
 
   const handleEditProposal = () => navigate({ search: () => ({ editingProposal: true }) });
 
-  async function handleWidhrawProposal() {
+  async function handlewithdrawProposal() {
     try {
       const res = await withdrawProposal({ jobId: job._id });
       toast({
@@ -154,10 +154,10 @@ function JobPageLayout() {
         variant: 'success'
       });
     } catch (err: any) {
-      console.error("err in withraw proposal", err);
+      console.error("err in withdraw proposal", err);
       toast({
         title: 'Oops! An Error Occured',
-        description: getApiErrMsg(err, "Unable to withraw Job Proposal"),
+        description: getApiErrMsg(err, "Unable to withdraw Job Proposal"),
         variant: 'destructive'
       });
     }
@@ -199,7 +199,7 @@ function JobPageLayout() {
         onCancelProposal={handleCancelProposal}
         onSubmitProposal={handleSubmitProposal}
         onEditProposal={handleEditProposal}
-        onWithdrawProposal={handleWidhrawProposal}
+        onWithdrawProposal={handlewithdrawProposal}
         setProposalStatus={setProposalStatus}
       />
     </>

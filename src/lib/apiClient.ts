@@ -112,9 +112,9 @@ export const updateProposal = (data: { jobId: string, coverLetter: string; }) =>
     return apiClient.post('/proposal/update', data);
 };
 
-// TODO: change delete logic to widhraw proposal
+// TODO: change delete logic to withdraw proposal
 export const withdrawProposal = (data: { jobId: string; }) => {
-    return apiClient.delete('/proposal/delete', { data });
+    return apiClient.delete('/proposal/withdraw', { data });
 };
 
 // proposal methods for clients
