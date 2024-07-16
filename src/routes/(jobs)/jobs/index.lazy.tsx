@@ -27,7 +27,7 @@ async function jobsLoader() {
     try {
         function getApi() {
             if (user?.role === 'client') {
-                return getClientJobs(user._id);
+                return getClientJobs();
             }
             else if (user?.role === 'freelancer') {
                 return getJobs();

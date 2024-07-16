@@ -4,6 +4,7 @@ export type Proposal = {
     user?: {                // sometimer there is no need to display user's Info into UI, so it can be absent
         name: string,
         username: string,
+        isAvailableNow?: boolean,
         _id: string;
     },
     coverLetter: string;
@@ -25,6 +26,7 @@ export type JobItemBase = {
     updatedAt: string;
     isSaved: Boolean;
     proposals?: Proposal[];
+    proposalsCount: number;
     __v: number;
 };
 

@@ -94,8 +94,8 @@ export const getJobsById = (id: string) => {
     return apiClient.get(`/job/get?id=${id}`);
 };
 
-export const getClientJobs = (id: string) => {
-    return apiClient.get(`/job/client/get-all?id=${id}`);
+export const getClientJobs = () => {
+    return apiClient.get(`/job/client/get-all`);
 };
 
 export const toggleJobIsSaved = (data: { userId: string, jobId: string; }) => {

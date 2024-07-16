@@ -15,7 +15,7 @@ export type ViewProposalProps = {
 };
 
 export function ViewProposal({ proposal, onEdit, onWithdraw, setStatus, role }: ViewProposalProps) {
-    const { withdrawn, coverLetter, user, createdAt } = proposal;
+    const { isWithdrawn, coverLetter, user, createdAt } = proposal;
 
     return (
         <>
@@ -39,7 +39,7 @@ export function ViewProposal({ proposal, onEdit, onWithdraw, setStatus, role }: 
 
                 <CardFooter className="flex justify-end gap-x-4 py-4 w-full">
                     {role === 'freelancer' &&
-                        <FreelancerActions onEdit={onEdit} withdrawn={withdrawn} onWithdraw={onWithdraw} />
+                        <FreelancerActions onEdit={onEdit} isWithdrawn={isWithdrawn} onWithdraw={onWithdraw} />
                     }
 
                     {role === 'client' && <ClientActions proposal={proposal} setStatus={setStatus} />}

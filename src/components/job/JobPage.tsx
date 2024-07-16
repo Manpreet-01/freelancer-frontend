@@ -36,7 +36,7 @@ export default function JobPage({
                     <CardTitle>{job.title}</CardTitle>
                 </CardHeader>
 
-                <CardContent className="grid gap-y-2">
+                <CardContent className="grid gap-y-4">
                     <div className="flex gap-x-2">
                         <Wallet className="mr-1" />
                         <div className="flex items-center text-sm">
@@ -54,6 +54,10 @@ export default function JobPage({
                     <div className="flex items-center gap-x-2">
                         <TimerReset className="mr-1" />
                         {timeSince(job.createdAt)}
+                    </div>
+
+                    <div className="flex items-center gap-x-2">
+                        Proposals {job.proposalsCount}
                     </div>
 
                     <CardDescription className="whitespace-break-spaces my-4 text-md">{job.description}</CardDescription>

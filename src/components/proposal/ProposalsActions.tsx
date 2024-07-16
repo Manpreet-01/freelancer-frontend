@@ -7,13 +7,13 @@ const ProposalWithdrawnUi = () => <Button variant="ghost" className="text-yellow
 
 
 type FreelancerActionsProps = {
-    withdrawn: boolean
+    isWithdrawn: boolean
     onEdit: ViewProposalProps["onEdit"],
     onWithdraw: ViewProposalProps["onWithdraw"];
 };
 
-export const FreelancerActions = ({ onEdit, onWithdraw, withdrawn }: FreelancerActionsProps) => {
-    return withdrawn ? <ProposalWithdrawnUi /> : (
+export const FreelancerActions = ({ onEdit, onWithdraw, isWithdrawn }: FreelancerActionsProps) => {
+    return isWithdrawn ? <ProposalWithdrawnUi /> : (
         <>
             <Button size="sm" className="hover:scale-110" onClick={onEdit}>Edit Proposal</Button>
             <Button variant="destructive" size="sm" className="hover:scale-110" onClick={onWithdraw}>Withdraw Proposal</Button>
@@ -28,12 +28,12 @@ type ClientActionsProps = {
 };
 
 export const ClientActions = ({ proposal, setStatus }: ClientActionsProps) => {
-    const { withdrawn, status, _id } = proposal;
+    const { isWithdrawn, status, _id } = proposal;
     return (
         <>
-            {!withdrawn && status === 'accepted' && <Button variant="ghost" className="text-green-500 font-bold" disabled>Accepted</Button>}
-            {!withdrawn && status === 'rejected' && <Button variant="ghost" className="text-red-500 font-bold" disabled>Rejected</Button>}
-            {withdrawn ? (
+            {!isWithdrawn && status === 'accepted' && <Button variant="ghost" className="text-green-500 font-bold" disabled>Accepted</Button>}
+            {!isWithdrawn && status === 'rejected' && <Button variant="ghost" className="text-red-500 font-bold" disabled>Rejected</Button>}
+            {isWithdrawn ? (
                 <ProposalWithdrawnUi />
             ) : (
                 <>

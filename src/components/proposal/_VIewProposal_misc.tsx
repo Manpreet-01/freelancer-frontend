@@ -4,11 +4,15 @@ import { timeSince } from "@/lib/timeFormatter";
 import { Link } from '@tanstack/react-router';
 
 import type { Proposal } from "@/types/job.types";
+import { Badge } from "../ui/badge";
 
-export const UserInfo = ({ user }: { user: Proposal["user"]; }) => (
+export const UserInfo = ({ user }: { user: Proposal["user"] }) => (
     <div className="flex gap-x-2 items-center">
         <User />
         <span>{user?.name}</span>
+        {user?.isAvailableNow &&
+            <Badge className="bg-blue-700 py-1.5 px-3 text-xs text-white">Available now</Badge>
+        }
     </div>
 );
 
