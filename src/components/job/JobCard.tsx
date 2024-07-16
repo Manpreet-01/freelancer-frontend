@@ -1,7 +1,7 @@
 import { timeSince } from "@/lib/timeFormatter";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import { DollarSign, Tags, Timer, TimerReset, Wallet } from "lucide-react";
+import { DollarSign, Tags, Timer, TimerReset, Users2, Wallet } from "lucide-react";
 import type { JobItem } from "@/types/job.types";
 import { userData } from "@/types/user.types";
 import { ClientJobActions, FreelancerJobActions } from "./JobActions";
@@ -57,6 +57,12 @@ export default function JobCard({ job, goToJobPage, user, onEdit, onDelete }: Jo
                         <TimerReset className="mr-1" />
                         <div>{timeSince(job.createdAt)}</div>
                     </div>
+
+                    {job.proposalsCount !== undefined &&
+                        <div className="flex gap-x-2" title={`Proposals ${job.proposalsCount}`}>
+                            <Users2 /> {job.proposalsCount}
+                        </div>
+                    }
                 </CardContent>
 
                 <CardFooter className="flex items-start flex-col w-full">
@@ -103,6 +109,12 @@ export default function JobCard({ job, goToJobPage, user, onEdit, onDelete }: Jo
                     <TimerReset className="mr-1" />
                     <div>{timeSince(job.createdAt)}</div>
                 </div>
+
+                {job.proposalsCount !== undefined &&
+                    <div className="flex gap-x-2" title={`Proposals ${job.proposalsCount}`}>
+                        <Users2 /> {job.proposalsCount}
+                    </div>
+                }
 
                 <div className="flex gap-x-4 mt-4">
                     {user?.role === 'freelancer' &&
