@@ -5,17 +5,22 @@ import { toggleJobIsSaved } from "@/lib/apiClient";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "../ui/button";
 import { getApiErrMsg } from "@/lib/utils";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleIsSaved } from "@/features/job/jobSlice";
+import { RootState } from "@/store/store";
 
 type HeartButtonProps = {
-    userId: string,
     job: JobItem,
     className: string,
     size?: "default" | "sm" | "lg" | "icon" | null | undefined,
 };
 
-export function HeartButton({ userId, job, className, size }: HeartButtonProps) {
+export function HeartButton({ job, className, size }: HeartButtonProps) {
+    const userId = useSelector((state: RootState) => state.user.userData?._id)!;
     const [isSaved, setIsSaved] = useState(job.isSaved);
     const [isLoading, setIsLoading] = useState(false);
+
+    const dispatch = useDispatch();
 
     async function handleIsSavedToggle(e: MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
@@ -30,6 +35,7 @@ export function HeartButton({ userId, job, className, size }: HeartButtonProps) 
 
             if (updatedStatus === true || updatedStatus === false) {
                 setIsSaved(updatedStatus);
+                dispatch(toggleIsSaved({ isSaved: updatedStatus, jobId: job._id }));
             } else {
                 throw new Error(errMsg);
             }

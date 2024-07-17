@@ -3,34 +3,25 @@ import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { DollarSign, Tags, Timer, TimerReset, Users2, Wallet } from "lucide-react";
 import type { JobItem } from "@/types/job.types";
-import { userData } from "@/types/user.types";
 import { ClientJobActions, FreelancerJobActions } from "./JobActions";
 import { MouseEvent } from "react";
+import { useNavigate } from '@tanstack/react-router';
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 
-type JobCardProps = {
-    job: JobItem,
-    user: userData | null,
-    goToJobPage: any,
-    onEdit: (jobId: string) => void,
-    onDelete: (jobId: string) => void,
-};
+export default function JobCard({ job }: { job: JobItem; }) {
+    const user = useSelector((state: RootState) => state.user.userData);
+    const navigate = useNavigate();
 
-export default function JobCard({ job, goToJobPage, user, onEdit, onDelete }: JobCardProps) {
-    function handleJobEdit(e: MouseEvent<HTMLButtonElement>) {
+    function handleGoToJobPage(e: MouseEvent<HTMLElement>) {
         e.preventDefault();
         e.stopPropagation();
-        onEdit(job._id);
-    }
-
-    function handleJobDelete(e: MouseEvent<HTMLButtonElement>) {
-        e.preventDefault();
-        e.stopPropagation();
-        onDelete(job._id);
+        navigate({ to: `/job/${job._id}` });
     }
 
     return (
-        <Card className="p-2 hover:border-white cursor-pointer flex flex-col sm:flex-row justify-between items-start sm:items-center" onClick={() => goToJobPage(job._id)}>
+        <Card onClick={handleGoToJobPage} className="p-2 hover:border-white cursor-pointer flex flex-col sm:flex-row justify-between items-start sm:items-center">
             <div className="flex flex-col gap-y-2 justify-between items-start w-full">
                 <CardHeader className="flex gap-y-4">
                     <CardTitle>{job.title}</CardTitle>
@@ -78,15 +69,8 @@ export default function JobCard({ job, goToJobPage, user, onEdit, onDelete }: Jo
                     </div>
 
                     <div className="flex sm:hidden justify-end gap-x-4 mt-4 w-full">
-                        {user?.role === 'freelancer' &&
-                            <FreelancerJobActions user={user} job={job} />
-                        }
-                        {user?.role === 'client' &&
-                            <ClientJobActions
-                                onEdit={handleJobEdit}
-                                onDelete={handleJobDelete}
-                            />
-                        }
+                        {user?.role === 'freelancer' && <FreelancerJobActions job={job} />}
+                        {user?.role === 'client' && <ClientJobActions jobId={job._id} />}
                     </div>
                 </CardFooter>
             </div>
@@ -117,15 +101,8 @@ export default function JobCard({ job, goToJobPage, user, onEdit, onDelete }: Jo
                 }
 
                 <div className="flex gap-x-4 mt-4">
-                    {user?.role === 'freelancer' &&
-                        <FreelancerJobActions user={user} job={job} />
-                    }
-                    {user?.role === 'client' &&
-                        <ClientJobActions
-                            onEdit={handleJobEdit}
-                            onDelete={handleJobDelete}
-                        />
-                    }
+                    {user?.role === 'freelancer' && <FreelancerJobActions job={job} />}
+                    {user?.role === 'client' && <ClientJobActions jobId={job._id} />}
                 </div>
             </CardContent>
         </Card>
