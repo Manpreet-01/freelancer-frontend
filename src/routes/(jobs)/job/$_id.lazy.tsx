@@ -1,12 +1,13 @@
 import JobPage from '@/components/job/JobPage';
-import { AcceptOrRejectProposal, acceptOrRejectProposal, deleteJob, getJobsById, submitProposal, updateProposal, withdrawProposal } from '@/lib/apiClient';
+import { AcceptOrRejectProposal, acceptOrRejectProposal, deleteJob as deleteJobApi, getJobsById, submitProposal, updateProposal, withdrawProposal } from '@/lib/apiClient';
 import type { JobItem } from '@/types/job.types';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { toast } from '@/components/ui/use-toast';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState, store } from '@/store/store';
 import { getApiErrMsg } from '@/lib/utils';
 import { useEffect } from 'react';
+import { deleteJob } from '@/features/job/jobSlice';
 
 
 export const Route = createLazyFileRoute('/(jobs)/job/$_id')({
@@ -30,8 +31,14 @@ async function jobPageLoader({ params: { _id } }: { params: Params; }) {
   }
 
   try {
+    const jobs = store.getState().job.jobs;
+    const existingJob = jobs.find(job => job._id === _id);
+    // TODO: how to get purposals here ?? think logic
+    if (existingJob) return existingJob;
+
+    // else fetch from backend
     const res = await getJobsById(_id);
-    const job = res.data.data.job;
+    const job: JobItem = res?.data?.data?.job;
     if (!job) {
       throw redirect({
         to: '/notfound',
@@ -73,6 +80,7 @@ function JobPageLayout() {
   const { applying: isApplying, editingProposal: isEditingPropoal } = Route.useSearch<SearchParamsType>();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isApplying && isEditingPropoal) navigate({ to: '/notfound' });
@@ -86,7 +94,7 @@ function JobPageLayout() {
     };
 
     try {
-      const res = await deleteJob(payload);
+      const res = await deleteJobApi(payload);
 
       toast({
         title: "Success!",
@@ -94,6 +102,7 @@ function JobPageLayout() {
         variant: 'success'
       });
 
+      dispatch(deleteJob(job._id));
       navigate({ to: '/jobs' });
     }
     catch (err: any) {

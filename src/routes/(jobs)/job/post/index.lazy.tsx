@@ -1,5 +1,5 @@
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState, store } from '@/store/store';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -11,6 +11,9 @@ import { Button } from '@/components/ui/button';
 import { createJob } from '@/lib/apiClient';
 import { toast } from "@/components/ui/use-toast";
 import { Textarea } from '@/components/ui/textarea';
+import { getApiErrMsg } from '@/lib/utils';
+import { JobItem } from '@/types/job.types';
+import { postNewJob } from '@/features/job/jobSlice';
 
 
 // TODO: add validation ::: allowed for client only page
@@ -48,7 +51,9 @@ export const createJobSchema = z.object({
 
 function PostNewJobPage() {
   const user = useSelector((state: RootState) => state.user.userData);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const form = useForm<z.infer<typeof createJobSchema>>({
     resolver: zodResolver(createJobSchema),
@@ -72,9 +77,10 @@ function PostNewJobPage() {
         variant: 'success'
       });
 
-      const jobId = res.data.data.job._id;
-
-      navigate({ to: `/job/${jobId}` });
+      const job: JobItem = res?.data?.data?.job;
+      dispatch(postNewJob(job));
+      
+      navigate({ to: `/job/${job._id}` });
     }
     catch (err) {
       console.error("---> error in posting job ");
@@ -82,8 +88,7 @@ function PostNewJobPage() {
 
       toast({
         title: "Failed to Post Job!",
-        // @ts-ignore
-        description: err.response?.data?.message || err.response?.message || err.message || "Failed to post job.",
+        description: getApiErrMsg(err, "Failed to post job."),
         variant: 'destructive'
       });
     }

@@ -1,8 +1,8 @@
-import { updateJob, getJobsById } from '@/lib/apiClient';
+import { updateJob as updateJobApi, getJobsById } from '@/lib/apiClient';
 import type { JobItem } from '@/types/job.types';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { toast } from '@/components/ui/use-toast';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState, store } from '@/store/store';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { createJobSchema } from '../post/index.lazy';
 import { Textarea } from '@/components/ui/textarea';
 import { getApiErrMsg } from '@/lib/utils';
+import { updateJob } from '@/features/job/jobSlice';
 
 type Params = {
   _id: string;
@@ -39,8 +40,13 @@ export const Route = createLazyFileRoute('/(jobs)/job/edit/$_id')({
 
     try {
       // job validations
+      const jobs = store.getState().job.jobs;
+      const existingJob = jobs.find(job => job._id === _id);
+      if (existingJob) return existingJob;
+
+      // else fetch from backend
       const res = await getJobsById(_id);
-      const job = res.data.data.job;
+      const job: JobItem = res?.data?.data?.job;
       if (!job) {
         toast({
           title: 'Error',
@@ -50,7 +56,6 @@ export const Route = createLazyFileRoute('/(jobs)/job/edit/$_id')({
         throw redirect({ to: '/notfound' });
       }
 
-      // TODO: add this logic on backend also
       if (user._id !== job.createdBy) {
         toast({
           title: 'Access denied',
@@ -95,7 +100,9 @@ export const updateJobSchema = createJobSchema.extend({
 function EditJobPage() {
   const user = useSelector((state: RootState) => state.user.userData);
   const job = Route.useLoaderData<JobItem | null>();
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const form = useForm<z.infer<typeof updateJobSchema>>({
     resolver: zodResolver(updateJobSchema),
@@ -111,8 +118,10 @@ function EditJobPage() {
     try {
       console.log("xxx ", formData);
 
-      const res = await updateJob(formData);
-      console.log('res --- ', res);
+      const res = await updateJobApi(formData);
+      const updatedJob: JobItem = res?.data?.data?.job;
+
+      dispatch(updateJob(updatedJob));
 
       toast({
         title: "Success!",
@@ -122,14 +131,13 @@ function EditJobPage() {
 
       navigate({ to: `/job/${job?._id}` });
     }
-    catch (err) {
+    catch (err: any) {
       console.error("---> error in updating job ");
       console.error(err);
 
       toast({
         title: "Failed to Update Job!",
-        // @ts-ignore
-        description: err.response?.data?.message || err.response?.message || err.message || "Failed to Update job.",
+        description: getApiErrMsg(err, "Failed to Update job."),
         variant: 'destructive'
       });
     }

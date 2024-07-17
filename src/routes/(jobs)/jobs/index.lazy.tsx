@@ -4,11 +4,12 @@ import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-rout
 import type { JobItem } from '@/types/job.types';
 import { toast } from '@/components/ui/use-toast';
 import { RootState, store } from '@/store/store';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@/components/ui/button';
 import { getApiErrMsg } from '@/lib/utils';
 import { deleteJobPayload } from "@/routes/(jobs)/job/$_id.lazy";
-import { deleteJob } from "@/lib/apiClient";
+import { deleteJob as deleteJobApi } from "@/lib/apiClient";
+import { setJobs, deleteJob } from '@/features/job/jobSlice';
 
 export const Route = createLazyFileRoute('/(jobs)/jobs/')({
     // @ts-ignore
@@ -25,6 +26,11 @@ async function jobsLoader() {
     }
 
     try {
+        // try to get from store
+        const storedJobs = store.getState().job.jobs;
+        if (storedJobs?.length > 0) return storedJobs;
+
+        // else fetch from api
         function getApi() {
             if (user?.role === 'client') {
                 return getClientJobs();
@@ -35,9 +41,8 @@ async function jobsLoader() {
         }
 
         const res = await getApi();
-        // @ts-ignore
-        const jobs = res.data?.data?.jobs;
-        console.log(" jobs ;;;;; ", jobs);
+        const jobs: JobItem[] = res?.data?.data?.jobs;
+        store.dispatch(setJobs(jobs));
         return jobs;
     }
     catch (err) {
@@ -52,9 +57,10 @@ async function jobsLoader() {
 }
 
 function JobsPage() {
-    const jobs = Route.useLoaderData({}) as JobItem[];
     const user = useSelector((state: RootState) => state.user.userData);
+    const jobs = useSelector((state: RootState) => state.job.jobs);
 
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const handlePostOnClick = () => navigate({ to: '/job/post' });
@@ -68,7 +74,7 @@ function JobsPage() {
         };
 
         try {
-            const res = await deleteJob(payload);
+            const res = await deleteJobApi(payload);
 
             toast({
                 title: "Success!",
@@ -76,7 +82,8 @@ function JobsPage() {
                 variant: 'success'
             });
 
-            navigate({ to: '' });  // refresh page after delete job
+            dispatch(deleteJob(jobId));
+
         }
         catch (err: any) {
             console.error('err in delete job --- ');
