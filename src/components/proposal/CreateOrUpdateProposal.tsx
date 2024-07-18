@@ -8,11 +8,11 @@ import { MessageSquareWarningIcon } from "lucide-react";
 
 type CreateOrUpdateProposalProps = {
     oldCoverLetter?: string,
-    onCancel: JobPageProps["onCancelProposal"],
+    onCancelProposal: JobPageProps["onCancelProposal"],
     onSubmit: JobPageProps["onSubmitProposal"],
 };
 
-export function CreateOrUpdateProposal({ onCancel, onSubmit, oldCoverLetter }: CreateOrUpdateProposalProps) {
+export function CreateOrUpdateProposal({ onCancelProposal, onSubmit, oldCoverLetter }: CreateOrUpdateProposalProps) {
     const [coverLetter, setCoverLetter] = useState(oldCoverLetter || '');
     const [errMsg, setErrMsg] = useState("");
     const [isIntracted, setIsIntracted] = useState(false);
@@ -58,7 +58,7 @@ export function CreateOrUpdateProposal({ onCancel, onSubmit, oldCoverLetter }: C
                         variant="destructive"
                         size="sm"
                         className="hover:scale-110"
-                        onClick={onCancel}
+                        onClick={onCancelProposal}
                     >
                         Cancel
                     </Button>

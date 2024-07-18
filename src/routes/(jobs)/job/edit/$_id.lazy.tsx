@@ -106,6 +106,8 @@ function EditJobPage() {
       description: job?.description || '',
     }
   });
+  
+  const handleCancel = () => navigate({ to: `/job/${job?._id}` });
 
   async function onSubmit(formData: z.infer<typeof updateJobSchema>) {
     try {
@@ -186,9 +188,12 @@ function EditJobPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? "Saving..." : "Save"}
-                  </Button>
+                  <div className="flex gap-4 w-full">
+                    <Button type="submit" disabled={form.formState.isSubmitting}>
+                      {form.formState.isSubmitting ? "Saving..." : "Save"}
+                    </Button>
+                    <Button type='button' onClick={handleCancel} variant="destructive">Cancel</Button>
+                  </div>
                 </div>
               </form>
             </Form>

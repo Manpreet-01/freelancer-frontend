@@ -1,4 +1,4 @@
-import { deleteJobPayload } from "@/routes/(jobs)/job/$_id.lazy";
+import { cancelJobPayload } from "@/routes/(jobs)/job/$_id.lazy";
 import { createJobSchema } from "@/routes/(jobs)/job/post/index.lazy";
 import { LoginFormSchema } from "@/routes/login.lazy";
 import axios from "axios";
@@ -86,8 +86,8 @@ export const updateJob = (data) => {
     return apiClient.put("/job/update", data);
 };
 
-export const deleteJob = (data: deleteJobPayload) => {
-    return apiClient.delete("/job/delete", { data });
+export const cancelJob = (data: cancelJobPayload) => {
+    return apiClient.delete("/job/cancel", { data });
 };
 
 export const getJobByid = (id: string) => {
@@ -120,9 +120,10 @@ export const withdrawProposal = (data: { jobId: string; }) => {
 // proposal methods for clients
 export type AcceptOrRejectProposal = {
     proposalId: string,
+    jobId: string,
     status: "accepted" | "rejected",
 };
 
-export const acceptOrRejectProposal = ({ proposalId, status }: AcceptOrRejectProposal) => {
-    return apiClient.put(`/proposal/toggle-status/${proposalId}/?proposalStatus=${status}`);
+export const acceptOrRejectProposal = ({ jobId, proposalId, status }: AcceptOrRejectProposal) => {
+    return apiClient.put(`/proposal/toggle-status/${proposalId}/?proposalStatus=${status}`, { jobId });
 };

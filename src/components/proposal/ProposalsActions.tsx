@@ -1,13 +1,14 @@
 import { Button } from "../ui/button";
 import { Undo } from "lucide-react";
 import type { ViewProposalProps } from "./ViewProposal";
+import { ConfirmPopup } from "../AlertDialogue";
 
 
 const ProposalWithdrawnUi = () => <Button variant="ghost" className="text-yellow-500 font-bold" disabled>Proposal Withdrawn</Button>;
 
 
 type FreelancerActionsProps = {
-    isWithdrawn: boolean
+    isWithdrawn: boolean;
     onEdit: ViewProposalProps["onEdit"],
     onWithdraw: ViewProposalProps["onWithdraw"];
 };
@@ -16,7 +17,14 @@ export const FreelancerActions = ({ onEdit, onWithdraw, isWithdrawn }: Freelance
     return isWithdrawn ? <ProposalWithdrawnUi /> : (
         <>
             <Button size="sm" className="hover:scale-110" onClick={onEdit}>Edit Proposal</Button>
-            <Button variant="destructive" size="sm" className="hover:scale-110" onClick={onWithdraw}>Withdraw Proposal</Button>
+            <ConfirmPopup
+                className="hover:scale-110"
+                variant="destructive"
+                size="sm"
+                onContinue={onWithdraw}
+            >
+                Withdraw Proposal
+            </ConfirmPopup>
         </>
     );
 };

@@ -6,6 +6,7 @@ import type { JobItem } from "@/types/job.types";
 import { UserData } from "@/types/user.types";
 import { ClientJobActions, FreelancerJobActions } from "./JobActions";
 import { MouseEvent } from "react";
+import { CancelledLabel } from "./_misc";
 
 
 type JobCardProps = {
@@ -13,26 +14,28 @@ type JobCardProps = {
     user: UserData | null,
     goToJobPage: any,
     onEdit: (jobId: string) => void,
-    onDelete: (jobId: string) => void,
+    onCancelJob: (jobId: string) => void,
 };
 
-export default function JobCard({ job, goToJobPage, user, onEdit, onDelete }: JobCardProps) {
+
+export default function JobCard({ job, goToJobPage, user, onEdit, onCancelJob }: JobCardProps) {
     function handleJobEdit(e: MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
         e.stopPropagation();
         onEdit(job._id);
     }
 
-    function handleJobDelete(e: MouseEvent<HTMLButtonElement>) {
+    function handleCancelJob(e: MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
         e.stopPropagation();
-        onDelete(job._id);
+        onCancelJob(job._id);
     }
 
     return (
         <Card className="p-2 hover:border-white cursor-pointer flex flex-col sm:flex-row justify-between items-start sm:items-center" onClick={() => goToJobPage(job._id)}>
             <div className="flex flex-col gap-y-2 justify-between items-start w-full">
-                <CardHeader className="flex gap-y-4">
+                {job.cancelled && <CancelledLabel />}
+                <CardHeader className="flex gap-y-2">
                     <CardTitle>{job.title}</CardTitle>
                     <CardDescription>{job.description}</CardDescription>
                 </CardHeader>
@@ -78,13 +81,13 @@ export default function JobCard({ job, goToJobPage, user, onEdit, onDelete }: Jo
                     </div>
 
                     <div className="flex sm:hidden justify-end gap-x-4 mt-4 w-full">
-                        {user?.role === 'freelancer' &&
+                        {user?.role === 'freelancer' && !job.cancelled &&
                             <FreelancerJobActions user={user} job={job} />
                         }
-                        {user?.role === 'client' &&
+                        {user?.role === 'client' && !job.cancelled &&
                             <ClientJobActions
                                 onEdit={handleJobEdit}
-                                onDelete={handleJobDelete}
+                                onCancelJob={handleCancelJob}
                             />
                         }
                     </div>
@@ -117,13 +120,13 @@ export default function JobCard({ job, goToJobPage, user, onEdit, onDelete }: Jo
                 }
 
                 <div className="flex gap-x-4 mt-4">
-                    {user?.role === 'freelancer' &&
+                    {user?.role === 'freelancer' && !job.cancelled &&
                         <FreelancerJobActions user={user} job={job} />
                     }
-                    {user?.role === 'client' &&
+                    {user?.role === 'client' && !job.cancelled &&
                         <ClientJobActions
                             onEdit={handleJobEdit}
-                            onDelete={handleJobDelete}
+                            onCancelJob={handleCancelJob}
                         />
                     }
                 </div>

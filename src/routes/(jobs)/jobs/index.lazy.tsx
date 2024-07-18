@@ -7,8 +7,8 @@ import { RootState, store } from '@/store/store';
 import { useSelector } from 'react-redux';
 import { Button } from '@/components/ui/button';
 import { getApiErrMsg } from '@/lib/utils';
-import { deleteJobPayload } from "@/routes/(jobs)/job/$_id.lazy";
-import { deleteJob } from "@/lib/apiClient";
+import { cancelJobPayload } from "@/routes/(jobs)/job/$_id.lazy";
+import { cancelJob } from "@/lib/apiClient";
 
 export const Route = createLazyFileRoute('/(jobs)/jobs/')({
     // @ts-ignore
@@ -61,30 +61,30 @@ function JobsPage() {
     const handleGoToJobPage = (jobId: string) => navigate({ to: `/job/${jobId}` });
     const handleGoToEditJob = (jobId: string) => navigate({ to: `/job/edit/${jobId}` });
 
-    async function handleDeleteJob(jobId: string) {
-        const payload: deleteJobPayload = {
+    async function handlecancelJob(jobId: string) {
+        const payload: cancelJobPayload = {
             jobId,
             userId: user?._id || ""
         };
 
         try {
-            const res = await deleteJob(payload);
+            const res = await cancelJob(payload);
 
             toast({
                 title: "Success!",
-                description: res.data.message || "Job deleted successfully",
+                description: res.data.message || "Job cancelled successfully",
                 variant: 'success'
             });
 
-            navigate({ to: '' });  // refresh page after delete job
+            navigate({ to: '' });  // refresh page after cancel the job
         }
         catch (err: any) {
-            console.error('err in delete job --- ');
+            console.error('err in cancelling the job --- ');
             console.error(err);
 
             toast({
-                title: 'Failed to delete job.',
-                description: getApiErrMsg(err, 'Failed to delete job.'),
+                title: 'Failed to cancel the job.',
+                description: getApiErrMsg(err, 'Failed to cancel the job.'),
                 variant: 'destructive'
             });
         }
@@ -110,7 +110,7 @@ function JobsPage() {
                         user={user}
                         goToJobPage={handleGoToJobPage}
                         onEdit={handleGoToEditJob}
-                        onDelete={handleDeleteJob}
+                        onCancelJob={handlecancelJob}
                     />
                 )}
             </div>

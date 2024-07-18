@@ -25,6 +25,7 @@ export type JobItemBase = {
     createdAt: string;
     updatedAt: string;
     isSaved: Boolean;
+    cancelled: Boolean;
     proposals?: Proposal[];
     proposalsCount: number;
     __v: number;

@@ -8,11 +8,12 @@ import { ClientJobActions, FreelancerJobActions } from "./JobActions";
 import { CreateOrUpdateProposal } from "../proposal/CreateOrUpdateProposal";
 import { ViewProposal } from "../proposal/ViewProposal";
 import { ProposalsList } from "../proposal/ProposalsList";
+import { CancelledLabel } from "./_misc";
 
 export type JobPageProps = {
     job: JobItem,
     user: UserData | null,
-    onDelete: any,
+    onCancelJob: any,
     onEdit: any,
     isApplying: boolean,
     isEditingPropoal: boolean,
@@ -24,7 +25,7 @@ export type JobPageProps = {
 };
 
 export default function JobPage({
-    job, user, onDelete, onEdit, isApplying, isEditingPropoal,
+    job, user, onCancelJob, onEdit, isApplying, isEditingPropoal,
     onCancelProposal, onSubmitProposal, onEditProposal, onWithdrawProposal,
     setProposalStatus
 }: JobPageProps) {
@@ -32,6 +33,7 @@ export default function JobPage({
     return (
         <>
             <Card className="m-4 mt-8 p-2">
+                {job.cancelled && <CancelledLabel />}
                 <CardHeader>
                     <CardTitle>{job.title}</CardTitle>
                 </CardHeader>
@@ -75,13 +77,13 @@ export default function JobPage({
                         ))}
                     </div>
 
-                    {user?.role === 'client' &&
+                    {user?.role === 'client' && !job.cancelled &&
                         <div className="flex gap-x-4 pr-4 justify-end w-full">
-                            <ClientJobActions onEdit={onEdit} onDelete={onDelete} />
+                            <ClientJobActions onEdit={onEdit} onCancelJob={onCancelJob} />
                         </div>
                     }
 
-                    {user?.role === 'freelancer' && !isApplying &&
+                    {user?.role === 'freelancer' && !isApplying && !job.cancelled &&
                         <div className="flex gap-x-4 pr-4 justify-end w-full">
                             <FreelancerJobActions user={user} job={job} />
                         </div>
@@ -89,22 +91,22 @@ export default function JobPage({
                 </CardFooter>
             </Card>
 
-            {user?.role === 'freelancer' && !job.isApplied && isApplying &&
+            {user?.role === 'freelancer' && !job.isApplied && isApplying && !job.cancelled &&
                 <CreateOrUpdateProposal
-                    onCancel={onCancelProposal}
+                    onCancelProposal={onCancelProposal}
                     onSubmit={onSubmitProposal}
                 />
             }
 
-            {user?.role === 'freelancer' && job.isApplied && isEditingPropoal && (
+            {user?.role === 'freelancer' && job.isApplied && isEditingPropoal && !job.cancelled && (
                 <CreateOrUpdateProposal
                     oldCoverLetter={job.proposal.coverLetter}
-                    onCancel={onCancelProposal}
+                    onCancelProposal={onCancelProposal}
                     onSubmit={onSubmitProposal}
                 />
             )}
 
-            {user?.role === 'freelancer' && job.isApplied && !isEditingPropoal &&
+            {user?.role === 'freelancer' && job.isApplied && !isEditingPropoal && !job.cancelled &&
                 <ViewProposal
                     proposal={job.proposal}
                     onEdit={onEditProposal}
@@ -113,7 +115,7 @@ export default function JobPage({
                 />
             }
 
-            {user?.role === 'client' && (
+            {user?.role === 'client' && !job.cancelled && (
                 <ProposalsList
                     job={job}
                     user={user}

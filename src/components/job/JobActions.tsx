@@ -39,14 +39,15 @@ export function FreelancerJobActions({ user, job }: FreelancerJobActionsProps) {
 
 type ClientJobActionsProps = {
     onEdit: MouseEventHandler<HTMLButtonElement>,
-    onDelete: MouseEventHandler<HTMLButtonElement>,
+    onCancelJob: MouseEventHandler<HTMLButtonElement>,
 };
 
-export function ClientJobActions({ onEdit, onDelete }: ClientJobActionsProps) {
+export function ClientJobActions({ onEdit, onCancelJob }: ClientJobActionsProps) {
     return (
         <>
             <Button variant="outline" size="sm" onClick={onEdit}
                 className="cursor-pointer hover:scale-110"
+                title='edit'
             >
                 <Edit />
             </Button>
@@ -54,8 +55,9 @@ export function ClientJobActions({ onEdit, onDelete }: ClientJobActionsProps) {
             <ConfirmPopup
                 variant="outline"
                 size="sm"
+                title='cancel'
                 className="text-red-500 cursor-pointer hover:scale-110 hover:bg-red-500"
-                onContinue={onDelete}
+                onContinue={onCancelJob}
             >
                 <Trash2 />
             </ConfirmPopup>

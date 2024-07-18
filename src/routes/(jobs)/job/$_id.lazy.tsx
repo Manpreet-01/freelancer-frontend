@@ -1,5 +1,5 @@
 import JobPage from '@/components/job/JobPage';
-import { AcceptOrRejectProposal, acceptOrRejectProposal, deleteJob, getJobByid, submitProposal, updateProposal, withdrawProposal } from '@/lib/apiClient';
+import { AcceptOrRejectProposal, acceptOrRejectProposal, cancelJob, getJobByid, submitProposal, updateProposal, withdrawProposal } from '@/lib/apiClient';
 import type { JobItem } from '@/types/job.types';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { toast } from '@/components/ui/use-toast';
@@ -56,7 +56,7 @@ async function jobPageLoader({ params: { _id } }: { params: Params; }) {
 }
 
 
-export type deleteJobPayload = {
+export type cancelJobPayload = {
   userId: string,
   jobId: string,
 };
@@ -79,30 +79,30 @@ function JobPageLayout() {
     console.log('validating urls params');
   }, [!!isApplying, !!isEditingPropoal]);
 
-  async function handleDeleteJob() {
-    const payload: deleteJobPayload = {
+  async function handlecancelJob() {
+    const payload: cancelJobPayload = {
       jobId: job._id || "",
       userId: user._id || ""
     };
 
     try {
-      const res = await deleteJob(payload);
+      const res = await cancelJob(payload);
 
       toast({
         title: "Success!",
-        description: res.data.message || "Job deleted successfully",
+        description: res.data.message || "Job canceled successfully",
         variant: 'success'
       });
 
       navigate({ to: '/jobs' });
     }
     catch (err: any) {
-      console.error('err in delete job --- ');
+      console.error('err in cancel job --- ');
       console.error(err);
 
       toast({
-        title: 'Failed to delete job.',
-        description: getApiErrMsg(err, 'Failed to delete job.'),
+        title: 'Failed to cancel job.',
+        description: getApiErrMsg(err, 'Failed to cancel job.'),
         variant: 'destructive'
       });
     }
@@ -168,7 +168,7 @@ function JobPageLayout() {
 
   async function setProposalStatus({ proposalId, status }: AcceptOrRejectProposal) {
     try {
-      await acceptOrRejectProposal({ proposalId, status });
+      await acceptOrRejectProposal({ jobId: job._id, proposalId, status });
       toast({
         title: "Success!",
         description: `Proposal ${status} successfully`,
@@ -194,7 +194,7 @@ function JobPageLayout() {
         user={user}
         isApplying={isApplying}
         isEditingPropoal={isEditingPropoal}
-        onDelete={handleDeleteJob}
+        onCancelJob={handlecancelJob}
         onEdit={handleGoToEditJob}
         onCancelProposal={handleCancelProposal}
         onSubmitProposal={handleSubmitProposal}
