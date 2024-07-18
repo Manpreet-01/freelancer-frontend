@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logOutUser, setLoggedInUser } from '@/features/user/userSlice';
 import { useLayoutEffect } from 'react';
 import { RootState } from '@/store/store';
+import { getApiErrMsg } from '@/lib/utils';
 
 
 export const Route = createLazyFileRoute('/login')({
@@ -69,7 +70,7 @@ export function LoginPage() {
             console.error("login err :", err);
             toast({
                 title: "Login Failed!",
-                description: err.response?.data?.message || err.response?.message || err.message || "Form data submition Failed.",
+                description: getApiErrMsg(err, "Form data submition Failed."),
                 variant: 'destructive'
             });
 

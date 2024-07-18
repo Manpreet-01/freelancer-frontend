@@ -7,15 +7,20 @@ import { RootState, store } from '@/store/store';
 import { getProfile } from '@/lib/apiClient';
 import { logOutUser, setLoggedInUser } from '@/features/user/userSlice';
 import { NotFound } from './notfound.lazy';
+import { UserData } from '@/types/user.types';
 
 // import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 
 
 async function handleVerifyLogin() {
     try {
+        const user = store.getState().user;
+        if (user.isLoggedIn) return console.log("user is logged in");
+
+        console.log("trying verify details and logging in");
         const res = await getProfile();
-        const user = res.data.data.user;
-        store.dispatch(setLoggedInUser(user));
+        const loggedInUser: UserData = res.data.data.user;
+        store.dispatch(setLoggedInUser(loggedInUser));
     } catch (err) {
         console.log("err in verify user :: ", err);
         store.dispatch(logOutUser());

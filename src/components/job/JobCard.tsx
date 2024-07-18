@@ -3,14 +3,14 @@ import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { DollarSign, Tags, Timer, TimerReset, Users2, Wallet } from "lucide-react";
 import type { JobItem } from "@/types/job.types";
-import { userData } from "@/types/user.types";
+import { UserData } from "@/types/user.types";
 import { ClientJobActions, FreelancerJobActions } from "./JobActions";
 import { MouseEvent } from "react";
 
 
 type JobCardProps = {
     job: JobItem,
-    user: userData | null,
+    user: UserData | null,
     goToJobPage: any,
     onEdit: (jobId: string) => void,
     onDelete: (jobId: string) => void,

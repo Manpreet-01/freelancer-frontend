@@ -1,7 +1,6 @@
 import { JobItem } from "@/types/job.types";
 
-// TODO: rename this to UserData
-export type userData = {
+export type UserData = {
     _id: string;
     name: string;
     username: string;

@@ -1,5 +1,5 @@
 import JobPage from '@/components/job/JobPage';
-import { AcceptOrRejectProposal, acceptOrRejectProposal, deleteJob, getJobsById, submitProposal, updateProposal, withdrawProposal } from '@/lib/apiClient';
+import { AcceptOrRejectProposal, acceptOrRejectProposal, deleteJob, getJobByid, submitProposal, updateProposal, withdrawProposal } from '@/lib/apiClient';
 import type { JobItem } from '@/types/job.types';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { toast } from '@/components/ui/use-toast';
@@ -30,7 +30,7 @@ async function jobPageLoader({ params: { _id } }: { params: Params; }) {
   }
 
   try {
-    const res = await getJobsById(_id);
+    const res = await getJobByid(_id);
     const job = res.data.data.job;
     if (!job) {
       throw redirect({
@@ -102,7 +102,7 @@ function JobPageLayout() {
 
       toast({
         title: 'Failed to delete job.',
-        description: err.response.data.message,
+        description: getApiErrMsg(err, 'Failed to delete job.'),
         variant: 'destructive'
       });
     }

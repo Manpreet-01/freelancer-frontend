@@ -84,7 +84,7 @@ function JobsPage() {
 
             toast({
                 title: 'Failed to delete job.',
-                description: err.response.data.message,
+                description: getApiErrMsg(err, 'Failed to delete job.'),
                 variant: 'destructive'
             });
         }

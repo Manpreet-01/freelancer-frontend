@@ -1,4 +1,4 @@
-import { updateJob, getJobsById } from '@/lib/apiClient';
+import { updateJob, getJobByid } from '@/lib/apiClient';
 import type { JobItem } from '@/types/job.types';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { toast } from '@/components/ui/use-toast';
@@ -39,7 +39,7 @@ export const Route = createLazyFileRoute('/(jobs)/job/edit/$_id')({
 
     try {
       // job validations
-      const res = await getJobsById(_id);
+      const res = await getJobByid(_id);
       const job = res.data.data.job;
       if (!job) {
         toast({
@@ -128,8 +128,7 @@ function EditJobPage() {
 
       toast({
         title: "Failed to Update Job!",
-        // @ts-ignore
-        description: err.response?.data?.message || err.response?.message || err.message || "Failed to Update job.",
+        description: getApiErrMsg(err, "Failed to Update job."),
         variant: 'destructive'
       });
     }

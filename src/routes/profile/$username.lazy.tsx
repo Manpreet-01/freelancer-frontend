@@ -2,7 +2,7 @@ import { AppliedJobsComp } from '@/components/profile/AppliedJobsComp';
 import ViewProfile from '@/components/profile/ViewProfile';
 import { getPublicProfile } from '@/lib/apiClient';
 import { JobItem } from '@/types/job.types';
-import { userData } from '@/types/user.types';
+import { UserData } from '@/types/user.types';
 import { createLazyFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createLazyFileRoute('/profile/$username')({
@@ -29,7 +29,7 @@ async function publicProfileLoader({ params: { username } }: { params: Params; }
 
 // for other users public profile
 function PublicProfilePage() {
-  const user = Route.useLoaderData<userData>();
+  const user = Route.useLoaderData<UserData>();
 
   return (
     <div>

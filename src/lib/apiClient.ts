@@ -90,7 +90,7 @@ export const deleteJob = (data: deleteJobPayload) => {
     return apiClient.delete("/job/delete", { data });
 };
 
-export const getJobsById = (id: string) => {
+export const getJobByid = (id: string) => {
     return apiClient.get(`/job/get?id=${id}`);
 };
 

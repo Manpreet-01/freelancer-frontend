@@ -1,9 +1,9 @@
-import { userData } from "@/types/user.types";
+import { UserData } from "@/types/user.types";
 
 import profilePicPlaceHolder from '@/assets/vite.svg';
 
 type ViewProfileProps = {
-    user: userData;
+    user: UserData;
 };
 
 export default function ViewProfile({ user }: ViewProfileProps) {

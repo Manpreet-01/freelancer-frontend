@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { createJob } from '@/lib/apiClient';
 import { toast } from "@/components/ui/use-toast";
 import { Textarea } from '@/components/ui/textarea';
+import { getApiErrMsg } from '@/lib/utils';
 
 
 // TODO: add validation ::: allowed for client only page
@@ -82,8 +83,7 @@ function PostNewJobPage() {
 
       toast({
         title: "Failed to Post Job!",
-        // @ts-ignore
-        description: err.response?.data?.message || err.response?.message || err.message || "Failed to post job.",
+        description: getApiErrMsg(err, "Failed to post job."),
         variant: 'destructive'
       });
     }

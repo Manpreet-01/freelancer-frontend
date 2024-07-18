@@ -1,15 +1,15 @@
 import { useNavigate } from '@tanstack/react-router';
-import { userData } from "@/types/user.types";
+import { UserData } from "@/types/user.types";
 import { Button } from "../ui/button";
 import { HeartButton } from "./HeartButton";
 import { JobItem } from "@/types/job.types";
 import { Edit, Trash2 } from "lucide-react";
 import { MouseEvent, MouseEventHandler } from "react";
 import { Accepted, Applied, ApplyJob, Rejected, Withdrawn } from './_JobActions_misc';
-
+import { ConfirmPopup } from '../AlertDialogue';
 
 type FreelancerJobActionsProps = {
-    user: userData,
+    user: UserData,
     job: JobItem,
 };
 
@@ -51,11 +51,14 @@ export function ClientJobActions({ onEdit, onDelete }: ClientJobActionsProps) {
                 <Edit />
             </Button>
 
-            <Button variant="outline" size="sm" onClick={onDelete}
+            <ConfirmPopup
+                variant="outline"
+                size="sm"
                 className="text-red-500 cursor-pointer hover:scale-110 hover:bg-red-500"
+                onContinue={onDelete}
             >
                 <Trash2 />
-            </Button>
+            </ConfirmPopup>
         </>
     );
 }

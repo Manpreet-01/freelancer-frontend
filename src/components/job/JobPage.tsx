@@ -3,7 +3,7 @@ import { Badge } from "../ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { DollarSign, Tags, Timer, TimerReset, Wallet } from "lucide-react";
 import type { JobItem } from "@/types/job.types";
-import { userData } from "@/types/user.types";
+import { UserData } from "@/types/user.types";
 import { ClientJobActions, FreelancerJobActions } from "./JobActions";
 import { CreateOrUpdateProposal } from "../proposal/CreateOrUpdateProposal";
 import { ViewProposal } from "../proposal/ViewProposal";
@@ -11,7 +11,7 @@ import { ProposalsList } from "../proposal/ProposalsList";
 
 export type JobPageProps = {
     job: JobItem,
-    user: userData | null,
+    user: UserData | null,
     onDelete: any,
     onEdit: any,
     isApplying: boolean,

@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
+import { getApiErrMsg } from '@/lib/utils';
 
 
 export const Route = createLazyFileRoute('/register')({
@@ -62,7 +63,7 @@ export function RegisterPage() {
     });
 
     const navigate = useNavigate();
-    
+
     const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
 
     useLayoutEffect(() => {
@@ -101,7 +102,7 @@ export function RegisterPage() {
             }
             catch (err: any) {
                 console.error("register err :", err);
-                const errMsg = err.response?.data?.message || err.response?.message || err.message || "Form data submition Failed.";
+                const errMsg = getApiErrMsg(err, "Form data submition Failed.");
 
                 setUsernameMessage(errMsg);
 
@@ -143,13 +144,13 @@ export function RegisterPage() {
             console.error("register err :", err);
             toast({
                 title: "Registeration Failed!",
-                description: err.response?.data?.message || err.response?.message || err.message || "Form data submition Failed.",
+                description: getApiErrMsg(err, "Form data submition Failed."),
                 variant: 'destructive'
             });
         }
     }
-    
-    if(isLoggedIn) return null;
+
+    if (isLoggedIn) return null;
 
     return (
         <Card className="mx-auto max-w-sm mt-8">

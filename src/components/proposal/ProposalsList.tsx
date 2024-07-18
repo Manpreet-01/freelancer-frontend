@@ -1,13 +1,13 @@
 import { JobItem } from "@/types/job.types";
 import { ViewProposal } from "./ViewProposal";
-import { userData } from "@/types/user.types";
+import { UserData } from "@/types/user.types";
 import { Card } from "../ui/card";
 
 
 
 type ProposalsList = {
     job: JobItem,
-    user: userData,
+    user: UserData,
     setProposalStatus: any,
 };
 
