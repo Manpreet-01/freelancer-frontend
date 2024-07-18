@@ -7,6 +7,7 @@ import { useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from "@/components/ui/use-toast";
 import ViewProfile from '@/components/profile/ViewProfile';
+import { resetJobSliceState } from '@/features/job/jobSlice';
 
 export const Route = createLazyFileRoute('/profile/')({
   component: ProfilePage,
@@ -31,6 +32,7 @@ function ProfilePage() {
     try {
       const res = await logOutUserApi();
       dispatch(logOutUser());
+      dispatch(resetJobSliceState());
       toast({
         title: "Logout Successful!",
         description: res.data.message || "User Logout successfully",

@@ -1,6 +1,6 @@
 import JobPage from '@/components/job/JobPage';
-import { AcceptOrRejectProposal, acceptOrRejectProposal, deleteJob as deleteJobApi, getJobsById, submitProposal, updateProposal, withdrawProposal } from '@/lib/apiClient';
-import type { JobItem } from '@/types/job.types';
+import { AcceptOrRejectProposal, acceptOrRejectProposal, deleteJob as deleteJobApi, getAllProposalsOfJob, getJobById, submitProposal, updateProposal, withdrawProposal } from '@/lib/apiClient';
+import type { JobItem, Proposal } from '@/types/job.types';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { toast } from '@/components/ui/use-toast';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,6 +8,7 @@ import { RootState, store } from '@/store/store';
 import { getApiErrMsg } from '@/lib/utils';
 import { useEffect } from 'react';
 import { deleteJob } from '@/features/job/jobSlice';
+import { setProposals } from '@/features/proposal/proposal';
 
 
 export const Route = createLazyFileRoute('/(jobs)/job/$_id')({
@@ -33,18 +34,36 @@ async function jobPageLoader({ params: { _id } }: { params: Params; }) {
   try {
     const jobs = store.getState().job.jobs;
     const existingJob = jobs.find(job => job._id === _id);
-    // TODO: how to get purposals here ?? think logic
-    if (existingJob) return existingJob;
 
-    // else fetch from backend
-    const res = await getJobsById(_id);
-    const job: JobItem = res?.data?.data?.job;
-    if (!job) {
-      throw redirect({
-        to: '/notfound',
-      });
+    // TODO: test this functionality
+    // optimize the extra network calls on submit, reject, acccept , withraw proposals
+    if (user.role === 'client' && !existingJob?.proposals) {
+      await fetchProposals();   // if existing job don't includes proposals then fetch 
     }
-    return job;
+
+    if(existingJob) return existingJob;
+
+    const fetchedJobs = await fetchJob();  // fetched job includes it's proposals also
+    return fetchedJobs;
+
+    async function fetchJob() {
+      const res = await getJobById(_id);
+      const job: JobItem = res?.data?.data?.job;
+      if (!job) {
+        throw redirect({
+          to: '/notfound',
+        });
+      }
+      return job;
+    }
+
+    async function fetchProposals() {
+      const res = await getAllProposalsOfJob(_id);
+      const proposals: Proposal[] = res?.data?.data?.job;
+      if (!proposals?.length) return;
+
+      store.dispatch(setProposals(proposals));
+    }
   }
   catch (error: any) {
     console.error("error in fetch job with id");

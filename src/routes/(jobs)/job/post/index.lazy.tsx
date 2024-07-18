@@ -64,6 +64,8 @@ function PostNewJobPage() {
     }
   });
 
+  const handleCancel = () => navigate({ to: "/jobs" });
+
   async function onSubmit(formData: z.infer<typeof createJobSchema>) {
     try {
       console.log("xxx ", formData);
@@ -79,7 +81,7 @@ function PostNewJobPage() {
 
       const job: JobItem = res?.data?.data?.job;
       dispatch(postNewJob(job));
-      
+
       navigate({ to: `/job/${job._id}` });
     }
     catch (err) {
@@ -93,6 +95,7 @@ function PostNewJobPage() {
       });
     }
   }
+
 
   return (
     <>
@@ -145,9 +148,12 @@ function PostNewJobPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? "Saving..." : "Post"}
-                  </Button>
+                  <div className="flex gap-4 w-full">
+                    <Button type="submit" className="" disabled={form.formState.isSubmitting}>
+                      {form.formState.isSubmitting ? "Saving..." : "Post"}
+                    </Button>
+                    <Button type='button' onClick={handleCancel} variant="destructive">Cancel</Button>
+                  </div>
                 </div>
               </form>
             </Form>

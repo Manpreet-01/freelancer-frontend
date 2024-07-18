@@ -46,9 +46,12 @@ export const jobSlice = createSlice({
             const { isSaved, jobId } = action.payload;
             state.jobs = state.jobs.map(job => job._id === jobId ? { ...job, isSaved } : job);
         },
+        resetJobSliceState: (state) => {
+            state.jobs = [];
+        },
     },
 });
 
 
-export const { setJobs, postNewJob, updateJob, deleteJob, toggleIsSaved } = jobSlice.actions;
+export const { setJobs, postNewJob, updateJob, deleteJob, toggleIsSaved,resetJobSliceState } = jobSlice.actions;
 export default jobSlice.reducer as Reducer<JobSliceState>;

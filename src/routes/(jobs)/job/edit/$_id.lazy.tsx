@@ -1,4 +1,4 @@
-import { updateJob as updateJobApi, getJobsById } from '@/lib/apiClient';
+import { updateJob as updateJobApi, getJobById } from '@/lib/apiClient';
 import type { JobItem } from '@/types/job.types';
 import { createLazyFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { toast } from '@/components/ui/use-toast';
@@ -45,7 +45,7 @@ export const Route = createLazyFileRoute('/(jobs)/job/edit/$_id')({
       if (existingJob) return existingJob;
 
       // else fetch from backend
-      const res = await getJobsById(_id);
+      const res = await getJobById(_id);
       const job: JobItem = res?.data?.data?.job;
       if (!job) {
         toast({
@@ -99,7 +99,7 @@ export const updateJobSchema = createJobSchema.extend({
 
 function EditJobPage() {
   const user = useSelector((state: RootState) => state.user.userData);
-  const job = Route.useLoaderData<JobItem | null>();
+  const job = Route.useLoaderData<JobItem>();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -113,6 +113,8 @@ function EditJobPage() {
       description: job?.description || '',
     }
   });
+
+  const handleCancel = () => navigate({ to: `/job/${job._id}` });
 
   async function onSubmit(formData: z.infer<typeof updateJobSchema>) {
     try {
@@ -195,9 +197,12 @@ function EditJobPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? "Saving..." : "Save"}
-                  </Button>
+                  <div className="flex gap-4 w-full">
+                    <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                      {form.formState.isSubmitting ? "Saving..." : "Save"}
+                    </Button>
+                    <Button type='button' onClick={handleCancel} variant="destructive">Cancel</Button>
+                  </div>
                 </div>
               </form>
             </Form>

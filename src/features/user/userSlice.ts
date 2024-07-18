@@ -9,7 +9,7 @@ export type UserState = {
 
 const initialState: UserState = {
     userData: null,
-    isLoggedIn: true,
+    isLoggedIn: false,
 };
 
 export const userSlice = createSlice({

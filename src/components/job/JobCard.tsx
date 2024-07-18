@@ -23,11 +23,7 @@ export default function JobCard({ job, goToJobPage, user, onEdit, onDelete }: Jo
         onEdit(job._id);
     }
 
-    function handleJobDelete(e: MouseEvent<HTMLButtonElement>) {
-        e.preventDefault();
-        e.stopPropagation();
-        onDelete(job._id);
-    }
+    const handleJobDelete = () => onDelete(job._id);
 
     return (
         <Card className="p-2 hover:border-white cursor-pointer flex flex-col sm:flex-row justify-between items-start sm:items-center" onClick={() => goToJobPage(job._id)}>

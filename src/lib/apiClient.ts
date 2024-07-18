@@ -90,7 +90,7 @@ export const deleteJob = (data: deleteJobPayload) => {
     return apiClient.delete("/job/delete", { data });
 };
 
-export const getJobsById = (id: string) => {
+export const getJobById = (id: string) => {
     return apiClient.get(`/job/get?id=${id}`);
 };
 
@@ -125,4 +125,9 @@ export type AcceptOrRejectProposal = {
 
 export const acceptOrRejectProposal = ({ proposalId, status }: AcceptOrRejectProposal) => {
     return apiClient.put(`/proposal/toggle-status/${proposalId}/?proposalStatus=${status}`);
+};
+
+// get all proposal of a specific job
+export const getAllProposalsOfJob = (jobId: string) => {
+    return apiClient.get(`proposal/get-all/${jobId}`);
 };
